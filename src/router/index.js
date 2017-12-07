@@ -6,8 +6,12 @@ import IndexPage from '@/components/IndexPage'
 
 Vue.use(Router)
 
-export default new Router({
+let router = new Router({
   routes: [
+    {
+      path:'/',
+      redirect:'login'
+    },
     {
       path: '/login',
       name: 'Login',
@@ -24,4 +28,21 @@ export default new Router({
     }
 
   ]
+});
+router.beforeEach(({name},from,next)=>{
+  console.log(localStorage)
+  if (localStorage.JWT_TOKEN) {
+    if (name == 'login') {
+      next('/');
+    } else {
+      next();
+    }
+  } else {
+    if (name == 'login') {
+      next();
+    } else {
+      next({name: 'login'});
+    }
+  }
 })
+export default router;
