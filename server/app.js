@@ -5,25 +5,23 @@ var logger = require('morgan');
 var session = require('express-session');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-
 var index = require('./routes/index');
-
+var api = require('./routes/api');
 var app = express();
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.set('view engine', 'jade');
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 60*1000*60 }}))
+app.use(session({ secret: 'dysniubi', cookie: { maxAge: 60*1000*60 }}))
 app.use(express.static(path.join(__dirname, '../dist')));
 
 
+app.use('/api',api);
 app.use('/', index);
 
 // catch 404 and forward to error handler
