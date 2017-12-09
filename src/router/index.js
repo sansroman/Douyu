@@ -3,6 +3,9 @@ import Router from 'vue-router'
 import Login from '@/components/Login'
 import ErrorPage from '@/components/ErrorPage'
 import IndexPage from '@/components/IndexPage'
+import Total from '@/components/Total'
+import Query from "@/components/Query";
+import Manager from "@/components/Manager";
 
 Vue.use(Router)
 
@@ -24,25 +27,37 @@ let router = new Router({
     {
       path:'/index',
       name:'index',
-      component: IndexPage
+      component: IndexPage,
+      children:[
+        {
+          path:'total',
+          component:Total
+        },
+        {
+          path:'query',
+          component:Query
+        },
+        {
+          path:'manager',
+          component:Manager
+        }
+      ]
     }
 
   ]
 });
 router.beforeEach(({name},from,next)=>{
-  console.log(localStorage)
-  if (localStorage.JWT_TOKEN) {
-    if (name == 'login') {
-      next('/');
-    } else {
+  let username =sessionStorage.getItem("username");
+  let role =sessionStorage.getItem("roles");
+  console.log(name);
+  if(!username){
+    if(name==='Login'){
       next();
+    }else{
+      next('/login');
     }
-  } else {
-    if (name == 'login') {
-      next();
-    } else {
-      next({name: 'login'});
-    }
+  }else{
+    next();
   }
 })
 export default router;
