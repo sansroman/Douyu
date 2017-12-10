@@ -6,6 +6,7 @@ import IndexPage from '@/components/IndexPage'
 import Total from '@/components/Total'
 import Query from "@/components/Query";
 import Manager from "@/components/Manager";
+import Register from "@/components/Register";
 
 Vue.use(Router)
 
@@ -14,6 +15,11 @@ let router = new Router({
     {
       path:'/',
       redirect:'login'
+    },
+    {
+      path:'/register',
+      name:'Register',
+      component:Register
     },
     {
       path: '/login',
@@ -49,9 +55,10 @@ let router = new Router({
 router.beforeEach(({name},from,next)=>{
   let username =sessionStorage.getItem("username");
   let role =sessionStorage.getItem("roles");
-  console.log(name);
+  console.log(username);
+  console.log(role);
   if(!username){
-    if(name==='Login'){
+    if(name==='Login'||name==='Register'){
       next();
     }else{
       next('/login');

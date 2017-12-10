@@ -1,47 +1,42 @@
 <template>
 <div id="manager">
     <el-table
-    :data="tableData"
-    border
-    style="width: 100%">
+    v-loading
+    :data="userData">
     <el-table-column
       fixed
-      prop="date"
-      label="日期"
+      prop="username"
+      label="用户名"
       width="150">
     </el-table-column>
     <el-table-column
-      prop="name"
-      label="姓名"
+      prop="douyunn"
+      label="斗鱼ID"
       width="120">
     </el-table-column>
     <el-table-column
-      prop="province"
-      label="省份"
+      prop="uid"
+      label="斗鱼UID"
       width="120">
     </el-table-column>
     <el-table-column
-      prop="city"
-      label="市区"
-      width="120">
-    </el-table-column>
-    <el-table-column
-      prop="address"
-      label="地址"
-      width="300">
-    </el-table-column>
-    <el-table-column
-      prop="zip"
-      label="邮编"
-      width="120">
-    </el-table-column>
-    <el-table-column
-      fixed="right"
-      label="操作"
-      width="100">
+      label="角色"
+      width="140">
       <template slot-scope="scope">
-        <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
-        <el-button type="text" size="small">编辑</el-button>
+          <el-select v-model="userData[scope.$index].role" placeholder="请选择">
+            <el-option v-for="item in roles" :key="item.value" :label="item.label" :value="item.value"  :disabled="item.disabled">
+              <span>{{ item.label }}</span>
+            </el-option>
+          </el-select>
+      </template>
+
+    </el-table-column>
+    <el-table-column
+      label="操作"
+      >
+      <template slot-scope="scope">
+        <el-button @click="modifyUser(scope.row)" type="primary" size="small">修改</el-button>
+        <el-button @click="delUser(scope.$index,scope.row)" type="danger" size="small">删除</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -49,41 +44,93 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   name: 'manager',
    data() {
       return {
-        tableData: [{
-          date: '2016-05-03',
-          name: '王小虎',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
-          zip: 200333
-        }, {
-          date: '2016-05-02',
-          name: '王小虎',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
-          zip: 200333
-        }, {
-          date: '2016-05-04',
-          name: '王小虎',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
-          zip: 200333
-        }, {
-          date: '2016-05-01',
-          name: '王小虎',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
-          zip: 200333
+        userData:[],
+        roles:[{
+            value:0,
+            label:'管理员',
+            disabled:true
+        },{
+            value:1,
+            label:'房管'
+        },{
+            value:2,
+            label:'游客'
         }]
       }
-      }
+  },
+  methods:{
+    delUser(index,data){
+        let self = this;
+        this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
+          cancelButtonText: '取消',
+          confirmButtonText: '确定',
+          type: 'warning'
+        }).then(() => {
+            axios
+            .delete("/api/user?username="+data.username)
+            .then(function(response) {
+              self.userData.splice(index,1);
+              self.$message({
+                type: 'success',
+                message: '删除成功!'
+              });
+            })
+            .catch(function(error) {
+                this.$message.error(error);   
+            });
+        }).catch(() => {
+          self.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
+    },
+    modifyUser(data){
+      let self =this;
+        self.$confirm('确认修改?', '提示', {
+          cancelButtonText: '取消',
+          confirmButtonText: '确定',
+          type: 'warning'
+        }).then(() => {
+            axios
+            .put("/api/user", {
+              username:data.username,
+             role:data.role
+            })
+            .then(function(response) {
+              self.$message({
+                type: 'success',
+                message: '修改成功!'
+              });
+            })
+            .catch(function(error) {
+                self.$message.error(error);   
+            });
+        }).catch(() => {
+          self.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
+    }
+  },
+  mounted(){
+    let self = this;
+        axios
+        .get("/api/allUser")
+        .then(function(response) {
+          self.userData = response.data;
+        })
+        .catch(function(error) {
+          self.$message.error(error);
+        });
+  }
 }
 </script>
 

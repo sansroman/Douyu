@@ -3,16 +3,16 @@
     <el-row :gutter="10" class="layout">
       <el-col :span="4" :offset="10">
           <div class="login-form">
-              <el-form label-width="60px" label-position="right" :rules="rules" :model="formData" status-icon>
+              <el-form label-width="60px" label-position="right" ref="ruleForm" :rules="rules" :model="ruleForm" status-icon>
                 <el-form-item label="账户" prop="username">
-                  <el-input type="text" v-model="formData.username" ></el-input>
+                  <el-input type="text" v-model="ruleForm.username" ></el-input>
                 </el-form-item>
                 <el-form-item label="密码" prop="password">
-                  <el-input type="password" v-model="formData.password" ></el-input>
+                  <el-input type="password" v-model="ruleForm.password" ></el-input>
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="primary" @click="login">登陆</el-button>
-                  <el-button @click="forget">忘记密码</el-button>
+                  <el-button type="primary" @click="login('ruleForm')">登陆</el-button>
+                  <el-button @click="reset('ruleForm')">注册</el-button>
                 </el-form-item>
               </el-form>
           </div>
@@ -29,7 +29,7 @@ export default {
   name: "Login",
   data() {
     return {
-      formData: {
+      ruleForm: {
         username: "",
         password: ""
       },
@@ -43,49 +43,42 @@ export default {
     };
   },
   methods: {
-    login(formData) {
+    login(formName) {
       let router = this.$router;
-      axios
+      this.$refs[formName].validate((vaild)=>{
+        if (vaild) {
+          axios
         .post("/login", {
-          username:this.formData.username,
-          password:this.formData.password
+          username:this.ruleForm.username,
+          password:this.ruleForm.password
         })
         .then(function(response) {
-          console.log(response)
-          let username =sessionStorage.setItem("username","1");
-          let role =sessionStorage.setItem("roles","");
+          sessionStorage.setItem("username",response.data.douyunn);
+          sessionStorage.setItem("roles",response.data.role);
           router.push('/index');
         })
         .catch(function(error) {
           console.log(error);
         });
+        }else{
+          return false;
+        }
+      })
 
     },
-    forget(formData) {
-      axios
-        .post("/api/register", {
-          username:this.formData.username,
-          password:this.formData.password
-        })
-        .then(function(response) {
-          console.log(response);
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
+    reset(formName) {
+      this.$router.push('/register');
     }
   }
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style>
-body {
-  width: 100%;
+<style scoped>
+.login{
+    width: 100%;
   height: 100%;
-  background: #e6e6e6;
 }
-
 .layout {
   margin-top: 300px;
 }

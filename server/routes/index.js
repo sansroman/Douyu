@@ -10,9 +10,8 @@ router.get('/', function(req, res, next) {
   } 
   res.sendfile('./dist/index.html');
 });
-router.post('/login',(req,res,next)=>{
-    authentication.auth(req,res);
-});
+router.post('/login',authentication.auth);
+router.post('/register',authentication.reg);
 
 
 

@@ -11,9 +11,13 @@ export default {
 </script>
 
 <style>
+
+
 html,body{
   height: 100%;
   overflow:hidden;
+    width: 100%;
+  background: #e6e6e6;
 }
 #app {
   color: #2c3e50;

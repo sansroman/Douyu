@@ -1,6 +1,11 @@
 var express = require('express');
 var router = express.Router();
 var authentication = require('../authentication');
+let getAllUser = require('../middleware/Dao').getAllUser;
+let delUserByUsername = require('../middleware/Dao').delUserByUsername;
+let findOneByUser = require('../middleware/Dao').findOneByUser;
+let modifyUser = require('../middleware/Dao').modifyUser;
+
 
 router.use((req,res,next)=>{
     req.roles = {manager:3}
@@ -10,10 +15,54 @@ router.use((req,res,next)=>{
 
 
 
-router.post('/register', authentication.role,(req, res) => {
-    console.log("success");
-    res.status(200).send({message:"success"});
+router.get('/allUser', authentication.role,(req, res) => {
+    getAllUser()
+    .then((results)=>{
+        res.status(200).send(results);
+    })
+    .catch((err)=>{
+        console.log(err);
+    })
 });
+
+router.delete('/user',authentication.role,(req, res) => {
+    let username = req.query.username||"";
+    findOneByUser(username)
+    .then((results)=>{
+        if(!results){
+            res.status(403).send('未找到该用户');
+        }else{
+            delUserByUsername(username)
+            .then((result)=>{
+                res.status(200).send('删除成功');
+            })
+            .catch((err)=>{
+                console.log(err);
+                res.status(500).send(err);
+            })
+        }
+    })
+})
+
+router.put('/user',authentication.role,(req, res) => {
+    let username = req.body.username||"";
+    let role = req.body.role||"";
+    findOneByUser(username)
+    .then((results)=>{
+        if(!results){
+            res.status(403).send('未找到该用户');
+        }else{
+            modifyUser(username,role)
+            .then((result)=>{
+                res.status(200).send('修改成功');
+            })
+            .catch((err)=>{
+                console.log(err);
+                res.status(500).send(err);
+            })
+        }
+    })
+})
 
 
 router.get('/test', (req, res, next) => {
