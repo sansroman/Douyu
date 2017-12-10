@@ -6,13 +6,14 @@
                 <el-option label="用户名" value="1"></el-option>
                 <el-option label="ID" value="2"></el-option>
             </el-select>
-            <el-button slot="append" icon="el-icon-search"></el-button>
+            <el-button slot="append" icon="el-icon-search" @click="query()"></el-button>
         </el-input>
         </div>
   </div>
 </template>
 
 <script>
+import axios from 'axios'
 export default {
   name: 'query',
   data(){
@@ -20,6 +21,22 @@ export default {
           querytext:'',
           select:''
       }
+  },
+  methods:{
+    query(querytext){
+      let self = this;
+      axios
+            .get("/api/danmu?douyunn="+self.querytext)
+            .then(function(response) {
+              self.$message({
+                type: 'success',
+                message: '读取成功!'
+              });
+            })
+            .catch(function(error) {
+                this.$message.error(error);   
+            });
+    }
   }
 }
 </script>

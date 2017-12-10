@@ -5,14 +5,27 @@ let getAllUser = require('../middleware/Dao').getAllUser;
 let delUserByUsername = require('../middleware/Dao').delUserByUsername;
 let findOneByUser = require('../middleware/Dao').findOneByUser;
 let modifyUser = require('../middleware/Dao').modifyUser;
+let queryDanmu = require('../middleware/Dao').queryDanmu;
 
-
-router.use((req,res,next)=>{
+router.use('/ser/',(req,res,next)=>{
     req.roles = {manager:3}
+    next();
+});
+router.use('/danmu',(req,res,next)=>{
+    req.roles = {query:3}
     next();
 })
 
 
+router.get('/danmu',authentication.role,(req,res)=>{
+    let douyunn = req.query.douyunn||"";
+    queryDanmu(douyunn).then((results)=>{
+        res.status(200).send(results);
+    })
+    .catch((err)=>{
+        console.log(err);
+    })
+})
 
 
 router.get('/allUser', authentication.role,(req, res) => {
@@ -67,7 +80,6 @@ router.put('/user',authentication.role,(req, res) => {
 
 router.get('/test', (req, res, next) => {
     var random = [];
-    console.log(Math.random)
     random.push(parseInt(Math.random() * 20));
     random.push(parseInt(Math.random() * 20));
     random.push(parseInt(Math.random() * 20));

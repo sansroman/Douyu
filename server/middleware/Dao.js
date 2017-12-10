@@ -7,14 +7,30 @@ const sql = {
     addUser: 'INSERT INTO user (username,password,douyunn) VALUES (?,?,?)',
     getAllUser:'SELECT username,douyunn,uid,role FROM user',
     delUserByUsername :'DELETE  FROM user WHERE username = ?',
-    modifyUser:'UPDATE user  set role = ? WHERE username = ?'
-    // queryDanmu = "",
+    modifyUser:'UPDATE user  set role = ? WHERE username = ?',
+    queryDanmu : 'SELECT rid,uid,nn,txt,time FROM danmu WHERE nn = ?'
     // getTotal = ""
 }
 
 let pool = mysql.createPool(db.mysql);
 
 let exec = {
+    queryDanmu(douyunn){
+        return new Promise((resolve,reject)=>{
+            pool.getConnection((err,connection) =>{
+                connection.query({
+                    sql:sql.queryDanmu,
+                    timeout:2000,
+                    values:[douyunn]
+                },(error,results,fields)=>{
+                    if(error) reject(error);
+                    resolve(results);
+                    connection.release();
+                });
+                
+            });
+        });
+    },
     modifyUser(user,role){
         return new Promise((resolve,reject)=>{
             pool.getConnection((err,connection) =>{
