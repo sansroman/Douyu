@@ -44,22 +44,22 @@ export default {
   },
   methods: {
     login(formName) {
-      let router = this.$router;
+      let selt = this;
       this.$refs[formName].validate((vaild)=>{
         if (vaild) {
           axios
-        .post("/login", {
-          username:this.ruleForm.username,
-          password:this.ruleForm.password
-        })
-        .then(function(response) {
-          sessionStorage.setItem("username",response.data.douyunn);
-          sessionStorage.setItem("roles",response.data.role);
-          router.push('/index');
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
+            .post("/login", {
+              username:this.ruleForm.username,
+              password:this.ruleForm.password
+            })
+            .then(function(response) {
+              sessionStorage.setItem("username",response.data.douyunn);
+              sessionStorage.setItem("roles",JSON.stringify(response.data.roles));
+              selt.$router.push('/index');
+            })
+            .catch(function(error) {
+              selt.$message.error(error.response.data);
+            });
         }else{
           return false;
         }

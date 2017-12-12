@@ -5,23 +5,52 @@ const sql = {
     queryUserByUser : "SELECT a.password,a.douyunn,b.query,b.manager,b.total FROM user a LEFT JOIN role b on a.role = b.role WHERE username = ?",
     queryUser : "SELECT a.password,a.douyunn,b.query,b.manager,b.total FROM user a LEFT JOIN role b on a.role = b.role WHERE username = ? OR douyunn = ?",
     addUser: 'INSERT INTO user (username,password,douyunn) VALUES (?,?,?)',
-    getAllUser:'SELECT username,douyunn,uid,role FROM user',
+    getAllUser:'SELECT username,douyunn,uid,role FROM user LIMIT ?,?',
     delUserByUsername :'DELETE  FROM user WHERE username = ?',
     modifyUser:'UPDATE user  set role = ? WHERE username = ?',
-    queryDanmu : 'SELECT rid,uid,nn,txt,time FROM danmu WHERE nn = ?'
+    queryDanmuByUser : 'SELECT rid,uid,nn,txt,time FROM danmu WHERE nn = ? LIMIT ?,?',
+    queryDanmuByUid : 'SELECT nn FROM danmu WHERE uid = ? GROUP BY nn' ,
+    getUserCount:'SELECT count(*) AS count FROM user ',
+    getDanmuCount:'SELECT count(*) AS count FROM  danmu WHERE nn = ?',
     // getTotal = ""
 }
 
 let pool = mysql.createPool(db.mysql);
 
 let exec = {
-    queryDanmu(douyunn){
+    queryDanmuByUser(douyunn,cur){
         return new Promise((resolve,reject)=>{
             pool.getConnection((err,connection) =>{
                 connection.query({
-                    sql:sql.queryDanmu,
+                    sql:sql.getDanmuCount,
                     timeout:2000,
                     values:[douyunn]
+                },(error,count,fields)=>{
+                    if(error) reject(error);
+                    let result = {total:count[0].count}
+                    pool.getConnection((err,connection) =>{
+                        connection.query({
+                            sql:sql.queryDanmuByUser,
+                            timeout:5000,
+                            values:[douyunn,cur,20]
+                        },(error,results,fields)=>{
+                            result.result = results;
+                            resolve(result);
+                            connection.release();
+                        });
+                    });
+                });
+                
+            });
+        });
+    },
+    queryDanmuByUid(uid){
+        return new Promise((resolve,reject)=>{
+            pool.getConnection((err,connection) =>{
+                connection.query({
+                    sql:sql.queryDanmuByUid,
+                    timeout:2000,
+                    values:[uid]
                 },(error,results,fields)=>{
                     if(error) reject(error);
                     resolve(results);
@@ -66,7 +95,8 @@ let exec = {
             pool.getConnection((err,connection) =>{
                 connection.query({
                     sql:sql.getAllUser,
-                    timeout:4000
+                    timeout:4000,
+                    values:[0,20]
                 },(error,results,fields)=>{
                     if(error) reject(error);
                     resolve(results);

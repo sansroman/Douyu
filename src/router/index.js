@@ -54,9 +54,7 @@ let router = new Router({
 });
 router.beforeEach(({name},from,next)=>{
   let username =sessionStorage.getItem("username");
-  let role =sessionStorage.getItem("roles");
-  console.log(username);
-  console.log(role);
+  let roles =sessionStorage.getItem("roles");
   if(!username){
     if(name==='Login'||name==='Register'){
       next();

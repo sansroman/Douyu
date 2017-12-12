@@ -5,31 +5,50 @@ let getAllUser = require('../middleware/Dao').getAllUser;
 let delUserByUsername = require('../middleware/Dao').delUserByUsername;
 let findOneByUser = require('../middleware/Dao').findOneByUser;
 let modifyUser = require('../middleware/Dao').modifyUser;
-let queryDanmu = require('../middleware/Dao').queryDanmu;
+let queryDanmuByUser = require('../middleware/Dao').queryDanmuByUser;
+let queryDanmuByUid = require('../middleware/Dao').queryDanmuByUid;
 
-router.use('/ser/',(req,res,next)=>{
-    req.roles = {manager:3}
+
+
+
+router.get('/danmu',(req,res,next)=>{
+    req.roles= {
+        query:3
+    }
     next();
-});
-router.use('/danmu',(req,res,next)=>{
-    req.roles = {query:3}
-    next();
-})
-
-
-router.get('/danmu',authentication.role,(req,res)=>{
+},authentication.role,(req,res)=>{
     let douyunn = req.query.douyunn||"";
-    queryDanmu(douyunn).then((results)=>{
-        res.status(200).send(results);
-    })
-    .catch((err)=>{
-        console.log(err);
-    })
+    if(douyunn){
+        let cur = req.query.cur*20||0;
+        queryDanmuByUser(douyunn,cur).then((results)=>{
+            if(results.total==0)res.status(404).send("未找到记录");
+            else res.status(200).send(results);
+        })
+        .catch((err)=>{
+            console.log(err);
+        })
+    }else{
+        let uid = req.query.uid||"";
+        queryDanmuByUid(uid).then((results)=>{
+            if(results.total==0)res.status(404).send("未找到记录");
+            else res.status(200).send(results);
+        })
+        .catch((err)=>{
+            console.log(err);
+        })
+    }
+   
 })
 
 
-router.get('/allUser', authentication.role,(req, res) => {
-    getAllUser()
+router.get('/allUser',(req,res,next)=>{
+    req.roles= {
+        manager:3
+    }
+    next();
+},authentication.role,(req, res) => {
+    let cur = req.query.cur*20||0;
+    getAllUser(cur)
     .then((results)=>{
         res.status(200).send(results);
     })
@@ -38,7 +57,12 @@ router.get('/allUser', authentication.role,(req, res) => {
     })
 });
 
-router.delete('/user',authentication.role,(req, res) => {
+router.delete('/user',(req,res,next)=>{
+    req.roles= {
+        manager:3
+    }
+    next();
+},authentication.role,(req, res) => {
     let username = req.query.username||"";
     findOneByUser(username)
     .then((results)=>{
@@ -57,7 +81,17 @@ router.delete('/user',authentication.role,(req, res) => {
     })
 })
 
-router.put('/user',authentication.role,(req, res) => {
+router.put('/user',(req,res,next)=>{
+    req.roles= {
+        manager:3
+    }
+    next();
+},authentication.role,(req,res,next)=>{
+    req.roles= {
+        manager:3
+    }
+    next();
+},(req, res) => {
     let username = req.body.username||"";
     let role = req.body.role||"";
     findOneByUser(username)
@@ -65,6 +99,8 @@ router.put('/user',authentication.role,(req, res) => {
         if(!results){
             res.status(403).send('未找到该用户');
         }else{
+            console.log(username);
+            console.log(role);
             modifyUser(username,role)
             .then((result)=>{
                 res.status(200).send('修改成功');
@@ -76,6 +112,10 @@ router.put('/user',authentication.role,(req, res) => {
         }
     })
 })
+
+
+
+
 
 
 router.get('/test', (req, res, next) => {
