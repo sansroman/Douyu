@@ -1,17 +1,5 @@
 const net = require('net');
-let mysql = require('mysql');
-let temp = [];
-let blacker_temp = [];
-let SQLcommand = {
-    danmu: 'INSERT INTO danmu(rid,uid,nn,txt,time) VALUES (?,?,?,?,?)',
-    blacker: 'INSERT INTO blacker(sid,did,snic,dnic,endtime) VALUES(?,?,?,?,?)'
-}
-connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'dys',
-    password: '123456',
-    database: 'dys',
-});
+let addDanmu = require('./Dao').addDanmu;
 
 function Client(roomid) {
     this.roomid = roomid;
@@ -142,32 +130,10 @@ function InsertDb() {
 
     //插入数据库
     for (let index in temp) {
-        connection.query({
-            sql: SQLcommand.danmu,
-            timeout: 3000,
-            values: temp[index]
-        }, (error, results, fields) => {
-            if (error && error.code === 'PROTOCOL_CONNECTION_LOST') {
-                connect();
-            } else if (error) {
-                console.log(error);
-                throw error;
-            }
-        });
+        addDanmu("danmu",tempp[index]);
     }
     for (let index in blacker_temp) {
-        connection.query({
-            sql: SQLcommand.blacker,
-            timeout: 3000,
-            values: blacker_temp[index]
-        }, (error, results, fields) => {
-            if (error && error.code === 'PROTOCOL_CONNECTION_LOST') {
-                connect();
-            } else if (error) {
-                console.log(error);
-                throw error;
-            }
-        });
+        addDanmu("block",tempp[index]);        
     }
     blacker_temp = [];
     temp = [];

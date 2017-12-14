@@ -1,160 +1,182 @@
-
 let mysql = require('mysql');
 let db = require('../conf').db;
 const sql = {
-    queryUserByUser : "SELECT a.password,a.douyunn,b.query,b.manager,b.total FROM user a LEFT JOIN role b on a.role = b.role WHERE username = ?",
-    queryUser : "SELECT a.password,a.douyunn,b.query,b.manager,b.total FROM user a LEFT JOIN role b on a.role = b.role WHERE username = ? OR douyunn = ?",
-    addUser: 'INSERT INTO user (username,password,douyunn) VALUES (?,?,?)',
-    getAllUser:'SELECT username,douyunn,uid,role FROM user LIMIT ?,?',
-    delUserByUsername :'DELETE  FROM user WHERE username = ?',
-    modifyUser:'UPDATE user  set role = ? WHERE username = ?',
-    queryDanmuByUser : 'SELECT rid,uid,nn,txt,time FROM danmu WHERE nn = ? LIMIT ?,?',
-    queryDanmuByUid : 'SELECT nn FROM danmu WHERE uid = ? GROUP BY nn' ,
-    getUserCount:'SELECT count(*) AS count FROM user ',
-    getDanmuCount:'SELECT count(*) AS count FROM  danmu WHERE nn = ?',
-    // getTotal = ""
+  queryUserByUser: "SELECT a.password,a.douyunn,b.query,b.manager,b.total FROM user a LEFT JOIN role b on a.role = b.role WHERE username = ?",
+  queryUser: "SELECT a.password,a.douyunn,b.query,b.manager,b.total FROM user a LEFT JOIN role b on a.role = b.role WHERE username = ? OR douyunn = ?",
+  addUser: 'INSERT INTO user (username,password,douyunn) VALUES (?,?,?)',
+  getAllUser: 'SELECT username,douyunn,uid,role FROM user LIMIT ?,?',
+  delUserByUsername: 'DELETE  FROM user WHERE username = ?',
+  modifyUser: 'UPDATE user  set role = ? WHERE username = ?',
+  queryDanmuByUser: 'SELECT rid,uid,nn,txt,time FROM danmu WHERE nn = ? LIMIT ?,?',
+  queryDanmuByUid: 'SELECT nn FROM danmu WHERE uid = ? GROUP BY nn',
+  getUserCount: 'SELECT count(*) AS count FROM user ',
+  getDanmuCount: 'SELECT count(*) AS count FROM  danmu WHERE nn = ?',
+  addDanmu: 'INSERT INTO danmu(rid,uid,nn,txt,time) VALUES (?,?,?,?,?)',
+  addBlacker: 'INSERT INTO blacker(sid,did,snic,dnic,endtime) VALUES(?,?,?,?,?)'
+  // getTotal = ""
 }
 
 let pool = mysql.createPool(db.mysql);
 
 let exec = {
-    queryDanmuByUser(douyunn,cur){
-        return new Promise((resolve,reject)=>{
-            pool.getConnection((err,connection) =>{
-                connection.query({
-                    sql:sql.getDanmuCount,
-                    timeout:2000,
-                    values:[douyunn]
-                },(error,count,fields)=>{
-                    if(error) reject(error);
-                    let result = {total:count[0].count}
-                    pool.getConnection((err,connection) =>{
-                        connection.query({
-                            sql:sql.queryDanmuByUser,
-                            timeout:5000,
-                            values:[douyunn,cur,20]
-                        },(error,results,fields)=>{
-                            result.result = results;
-                            resolve(result);
-                            connection.release();
-                        });
-                    });
-                });
-                
+  addDanmu(type,data) {
+    let execSQL;
+    if(type=="danmu") execSQL = sql.addDanmu
+    else execSQL =sql.addDanmu
+    pool.getConnection((err, connection) => {
+      connection.query({
+        sql: execSQL,
+        timeout: 3000,
+        values: data
+      }, (error, results, fields) => {
+        if (error && error.code === 'PROTOCOL_CONNECTION_LOST') {
+          connect();
+        } else if (error) {
+          console.log(error);
+          throw error;
+        }
+      });
+    })
+  },
+  queryDanmuByUser(douyunn, cur) {
+    return new Promise((resolve, reject) => {
+      pool.getConnection((err, connection) => {
+        connection.query({
+          sql: sql.getDanmuCount,
+          timeout: 2000,
+          values: [douyunn]
+        }, (error, count, fields) => {
+          if (error) reject(error);
+          let result = {
+            total: count[0].count
+          }
+          pool.getConnection((err, connection) => {
+            connection.query({
+              sql: sql.queryDanmuByUser,
+              timeout: 5000,
+              values: [douyunn, cur, 20]
+            }, (error, results, fields) => {
+              result.result = results;
+              resolve(result);
+              connection.release();
             });
+          });
         });
-    },
-    queryDanmuByUid(uid){
-        return new Promise((resolve,reject)=>{
-            pool.getConnection((err,connection) =>{
-                connection.query({
-                    sql:sql.queryDanmuByUid,
-                    timeout:2000,
-                    values:[uid]
-                },(error,results,fields)=>{
-                    if(error) reject(error);
-                    resolve(results);
-                    connection.release();
-                });
-                
-            });
+
+      });
+    });
+  },
+  queryDanmuByUid(uid) {
+    return new Promise((resolve, reject) => {
+      pool.getConnection((err, connection) => {
+        connection.query({
+          sql: sql.queryDanmuByUid,
+          timeout: 2000,
+          values: [uid]
+        }, (error, results, fields) => {
+          if (error) reject(error);
+          resolve(results);
+          connection.release();
         });
-    },
-    modifyUser(user,role){
-        return new Promise((resolve,reject)=>{
-            pool.getConnection((err,connection) =>{
-                connection.query({
-                    sql:sql.modifyUser,
-                    timeout:2000,
-                    values:[role,user]
-                },(error,results,fields)=>{
-                    if(error) reject(error);
-                    resolve(results);
-                    connection.release();
-                });
-            });
-        })
-    },
-    delUserByUsername(username){
-        return new Promise((resolve,reject)=>{
-            pool.getConnection((err,connection) =>{
-                connection.query({
-                    sql:sql.delUserByUsername,
-                    timeout:2000,
-                    values:username
-                },(error,results,fields)=>{
-                    if(error) reject(error);
-                    resolve(results);
-                    connection.release();
-                });
-            });
-        })
-    },
-    getAllUser(){
-        return new Promise((resolve,reject)=>{
-            pool.getConnection((err,connection) =>{
-                connection.query({
-                    sql:sql.getAllUser,
-                    timeout:4000,
-                    values:[0,20]
-                },(error,results,fields)=>{
-                    if(error) reject(error);
-                    resolve(results);
-                    connection.release();
-                });
-            });
-        })
-    },
-    addUser(userInfo){
-        return new Promise((resolve,reject)=>{
-            pool.getConnection((err,connection) =>{
-                connection.query({
-                    sql:sql.addUser,
-                    timeout:2000,
-                    values:userInfo
-                },(error,results,fields)=>{
-                    if(error) reject(error);
-                    resolve(results);
-                    connection.release();
-                });
-            });
-        })
-    },
-    findOneByUser(user){
-        return new Promise((resolve,reject)=>{
-            pool.getConnection((err,connection) =>{
-                connection.query({
-                    sql:sql.queryUserByUser,
-                    timeout:2000,
-                    values:[user]
-                },(error,results,fields)=>{
-                    if(error) reject(error);
-                    let result = results.length?results[0]:results;
-                    resolve(result);
-                    connection.release();
-                });
-                
-            });
+
+      });
+    });
+  },
+  modifyUser(user, role) {
+    return new Promise((resolve, reject) => {
+      pool.getConnection((err, connection) => {
+        connection.query({
+          sql: sql.modifyUser,
+          timeout: 2000,
+          values: [role, user]
+        }, (error, results, fields) => {
+          if (error) reject(error);
+          resolve(results);
+          connection.release();
         });
-    },
-    findOne(user,douyunn){
-        
-                return new Promise((resolve,reject)=>{
-                    pool.getConnection((err,connection) =>{
-                        connection.query({
-                            sql:sql.queryUser,
-                            timeout:4000,
-                            values:[user,douyunn]
-                        },(error,results,fields)=>{
-                            if(error) reject(error);
-                            let result = results.length!==0;
-                            resolve(result);
-                            connection.release();
-                        });
-                        
-                    });
-                });
-            }
+      });
+    })
+  },
+  delUserByUsername(username) {
+    return new Promise((resolve, reject) => {
+      pool.getConnection((err, connection) => {
+        connection.query({
+          sql: sql.delUserByUsername,
+          timeout: 2000,
+          values: username
+        }, (error, results, fields) => {
+          if (error) reject(error);
+          resolve(results);
+          connection.release();
+        });
+      });
+    })
+  },
+  getAllUser() {
+    return new Promise((resolve, reject) => {
+      pool.getConnection((err, connection) => {
+        connection.query({
+          sql: sql.getAllUser,
+          timeout: 4000,
+          values: [0, 20]
+        }, (error, results, fields) => {
+          if (error) reject(error);
+          resolve(results);
+          connection.release();
+        });
+      });
+    })
+  },
+  addUser(userInfo) {
+    return new Promise((resolve, reject) => {
+      pool.getConnection((err, connection) => {
+        connection.query({
+          sql: sql.addUser,
+          timeout: 2000,
+          values: userInfo
+        }, (error, results, fields) => {
+          if (error) reject(error);
+          resolve(results);
+          connection.release();
+        });
+      });
+    })
+  },
+  findOneByUser(user) {
+    return new Promise((resolve, reject) => {
+      pool.getConnection((err, connection) => {
+        connection.query({
+          sql: sql.queryUserByUser,
+          timeout: 2000,
+          values: [user]
+        }, (error, results, fields) => {
+          if (error) reject(error);
+          let result = results.length ? results[0] : results;
+          resolve(result);
+          connection.release();
+        });
+
+      });
+    });
+  },
+  findOne(user, douyunn) {
+
+    return new Promise((resolve, reject) => {
+      pool.getConnection((err, connection) => {
+        connection.query({
+          sql: sql.queryUser,
+          timeout: 4000,
+          values: [user, douyunn]
+        }, (error, results, fields) => {
+          if (error) reject(error);
+          let result = results.length !== 0;
+          resolve(result);
+          connection.release();
+        });
+
+      });
+    });
+  }
 }
 
 module.exports = exec;
