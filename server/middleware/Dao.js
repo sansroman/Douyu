@@ -19,13 +19,10 @@ const sql = {
 let pool = mysql.createPool(db.mysql);
 
 let exec = {
-  addDanmu(type,data) {
-    let execSQL;
-    if(type=="danmu") execSQL = sql.addDanmu
-    else execSQL =sql.addDanmu
+  addDanmu(data) {
     pool.getConnection((err, connection) => {
       connection.query({
-        sql: execSQL,
+        sql: sql.addDanmu,
         timeout: 3000,
         values: data
       }, (error, results, fields) => {
@@ -36,6 +33,24 @@ let exec = {
           throw error;
         }
       });
+      connection.release();
+    })
+  },
+  addBlacker(data) {
+    pool.getConnection((err, connection) => {
+      connection.query({
+        sql: sql.addBlacker,
+        timeout: 3000,
+        values: data
+      }, (error, results, fields) => {
+        if (error && error.code === 'PROTOCOL_CONNECTION_LOST') {
+          connect();
+        } else if (error) {
+          console.log(error);
+          throw error;
+        }
+      });
+      connection.release();
     })
   },
   queryDanmuByUser(douyunn, cur) {

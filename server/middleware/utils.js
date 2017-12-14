@@ -1,6 +1,9 @@
 const net = require('net');
 let addDanmu = require('./Dao').addDanmu;
+let addBlacker = require('./Dao').addBlacker;
 
+let temp =[],
+    blacker_temp=[];
 function Client(roomid) {
     this.roomid = roomid;
     this.buf = Buffer.alloc(0)
@@ -81,14 +84,7 @@ Client.prototype.formatDanmu = function (msg) {
         console.log(error);
         console.log(msg);
     }
-    // for (let i in msg) {
-    //     let splited = msg[i].split('@=');
-    //     if (splited.length != 2) {
-    //         console.log("msg:\n" + msg + "\n");
-    //         console.log("warn:\n" + msg[i] + "\n");
-    //     }
-    //     map[splited[0]] = splited[1];
-    // }
+
     return map;
 
 }
@@ -111,7 +107,6 @@ Client.prototype.sendData = function (s, msg) {
 function filter(map) {
     if (map.type == "chatmsg") chatmsg(map)
     else if (map.type == "newblackres") blackmsg(map)
-    // else console.log(map);
 }
 
 function chatmsg(data) {
@@ -123,17 +118,15 @@ function chatmsg(data) {
 function blackmsg(data) {
     //处理禁言信息 
     if (data.rid == 154537) blacker_temp.push([data.sid, data.did, data.snic, data.dnic, data.endtime]);
-    // console.log(blacker_temp);
 }
 
 function InsertDb() {
-
     //插入数据库
     for (let index in temp) {
-        addDanmu("danmu",tempp[index]);
+        addDanmu(temp[index]);
     }
     for (let index in blacker_temp) {
-        addDanmu("block",tempp[index]);        
+        addBlacker(temp[index]);        
     }
     blacker_temp = [];
     temp = [];
@@ -159,15 +152,4 @@ function debackslashify(text) {
 
 
 
-let dys = new Client(154537);
-let xiaoyuan = new Client(196);
-let ssr = new Client(138286);
-let fajie = new Client(67373);
-let daanchun = new Client(96291);
-
-
-dys.init();
-xiaoyuan.init();
-ssr.init();
-fajie.init();
-daanchun.init();
+module.exports = Client;
