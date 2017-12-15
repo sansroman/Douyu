@@ -8,7 +8,7 @@ var bodyParser = require('body-parser');
 var index = require('./routes/index');
 var api = require('./routes/api');
 var app = express();
-
+var Client = require('./middleware/utils');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -41,5 +41,20 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+
+
+let dys = new Client(154537);
+let xiaoyuan = new Client(196);
+let ssr = new Client(138286);
+let fajie = new Client(67373);
+let daanchun = new Client(96291);
+
+
+dys.init();
+xiaoyuan.init();
+ssr.init();
+fajie.init();
+daanchun.init();
 
 module.exports = app;
