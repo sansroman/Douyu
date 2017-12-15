@@ -28,7 +28,8 @@
       background
       layout="prev, pager, next"
        @current-change="handleCurrentChange"
-      page-size="20"
+      v-show='isHiddle'
+      :page-size="20"
       :total='total'>
     </el-pagination>
   </div>
@@ -146,6 +147,9 @@
     computed:{
       total(){
         return this.userData.length;
+      }
+      ,isHiddle(){
+        return this.total!==0;
       }
   }
   };

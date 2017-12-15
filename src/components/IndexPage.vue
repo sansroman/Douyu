@@ -2,13 +2,13 @@
   <div class="index">
       <el-container>
             <el-aside
-            width="200px">
+            width="10em">
                 <el-menu
                 default-active="total"
                 background-color="#545c64"
                 text-color="#fff"
                 active-text-color="#ffd04b"
-                router>
+                router>         
                 <el-menu-item v-show="isSuper" index="/index/total">
                     <i class="el-icon-menu"></i>
                     <span slot="title">网站总览</span>
@@ -53,6 +53,8 @@ export default {
       isAdmin(){
           return this.roles.query&&this.roles.query>2;
       }
+  },
+  methods:{
   }
 };
 </script>

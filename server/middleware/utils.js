@@ -1,10 +1,12 @@
 const net = require('net');
 let addDanmu = require('./Dao').addDanmu;
-
+let temp = [];
+let blacker_temp = [];
 function Client(roomid) {
     this.roomid = roomid;
     this.buf = Buffer.alloc(0)
 }
+
 Client.prototype.init = function () {
     let s = net.connect({
         port: 8601,

@@ -1,7 +1,7 @@
 <template>
   <div class="login">
     <el-row :gutter="10" class="layout">
-      <el-col :span="8" :offset="8">
+      <el-col :xl="{span:8,offset:8}" :xs="{span:22,offset:1}" :sm="{span:22,offset:1}" :md="{span:22,offset:1}" :lg="{span:8,offset:8}">
           <div class="login-form">
               <el-form label-width="100px" label-position="right" ref="ruleForm" :rules="rules" :model="ruleForm" status-icon>
                 <el-form-item label="账户" prop="username">
@@ -103,5 +103,8 @@ export default {
 </script scoped>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style >
+<style scoped>
+    .layout{
+      margin-top: 20px;
+    }
 </style>
