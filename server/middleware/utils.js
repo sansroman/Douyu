@@ -8,6 +8,7 @@ function Client(roomid) {
     this.roomid = roomid;
     this.buf = Buffer.alloc(0)
 }
+
 Client.prototype.init = function () {
     let s = net.connect({
         port: 8601,

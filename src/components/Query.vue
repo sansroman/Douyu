@@ -1,11 +1,7 @@
 <template>
   <div id="query">
-        <div style="margin-top: 15px;">
-        <el-input placeholder="请输入内容" v-model="querytext" class="input-with-select">
-            <el-select v-model="select" slot="prepend" placeholder="请选择">
-                <el-option label="用户名" value="1"></el-option>
-                <el-option label="ID" value="2"></el-option>
-            </el-select>
+        <div :class="{data:hasData}">
+        <el-input placeholder="请输入斗鱼ID" v-model="querytext" class="input-with-select">
             <el-button slot="append" icon="el-icon-search" @click="query"></el-button>
         </el-input>
         </div>
@@ -37,6 +33,7 @@
     </el-table>
     <el-pagination
       background
+      v-show="isHiddle"
       layout="prev, pager, next"
       @current-change="handleCurrentChange"
       :current-page="currentPage"
@@ -57,7 +54,8 @@ export default {
       danmuData:[],
       gridData:[],
       total:0,
-      currentPage:0
+      currentPage:0,
+
     };
   },
   methods: {
@@ -90,6 +88,11 @@ export default {
             type: "success",
             message: "读取成功!"
           });
+          console.log(response)
+          response.data.result.forEach(element => {
+            let tempTime = new Date(element.time);
+            element.time = tempTime.getFullYear()+"年"+tempTime.getMonth()+"月"+tempTime.getDay()+"日"+tempTime.getHours()+"时"+tempTime.getMinutes()+"分"+tempTime.getSeconds()
+          });
           self.danmuData = response.data.result;
           self.total = response.data.total;          
         })
@@ -101,6 +104,9 @@ export default {
   computed:{
     isHiddle(){
       return this.danmuData.length!==0;
+    },
+    hasData(){
+      return this.isHiddle?false:true;
     }
   }
 };
@@ -115,5 +121,10 @@ export default {
 }
 .input-with-select .el-input-group__prepend {
   background-color: #fff;
+}
+.data{
+  width: 30.0%;
+  margin-left:35%;
+  margin-top: 10%;
 }
 </style>
