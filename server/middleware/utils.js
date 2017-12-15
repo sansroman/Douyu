@@ -1,14 +1,9 @@
 const net = require('net');
 let addDanmu = require('./Dao').addDanmu;
-<<<<<<< HEAD
-let temp = [];
-let blacker_temp = [];
-=======
 let addBlacker = require('./Dao').addBlacker;
 
 let temp =[],
     blacker_temp=[];
->>>>>>> 509a8311a2159db31c873f005e7d5585bb9abec3
 function Client(roomid) {
     this.roomid = roomid;
     this.buf = Buffer.alloc(0)

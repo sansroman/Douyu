@@ -12,7 +12,8 @@ const sql = {
   getUserCount: 'SELECT count(*) AS count FROM user ',
   getDanmuCount: 'SELECT count(*) AS count FROM  danmu WHERE nn = ?',
   addDanmu: 'INSERT INTO danmu(rid,uid,nn,txt,time) VALUES (?,?,?,?,?)',
-  addBlacker: 'INSERT INTO blacker(sid,did,snic,dnic,endtime) VALUES(?,?,?,?,?)'
+  addBlacker: 'INSERT INTO blacker(sid,did,snic,dnic,endtime) VALUES(?,?,?,?,?)',
+  getMute:"SELECT snic,count(*) AS count FROM blacker GROUP BY snic ORDER BY count(*) DESC"
   // getTotal = ""
 }
 
@@ -185,6 +186,29 @@ let exec = {
         }, (error, results, fields) => {
           if (error) reject(error);
           let result = results.length !== 0;
+          resolve(result);
+          connection.release();
+        });
+
+      });
+    });
+  },
+  GetMuteList() {
+    return new Promise((resolve, reject) => {
+      pool.getConnection((err, connection) => {
+        connection.query({
+          sql: sql.getMute,
+          timeout: 4000
+        }, (error, results, fields) => {
+          if (error) reject(error);
+          let result = {
+            nnList:[],
+            countList:[]
+          }
+          results.forEach(element => {
+            result.nnList.push(element.snic);
+            result.countList.push(element.count);
+          });
           resolve(result);
           connection.release();
         });

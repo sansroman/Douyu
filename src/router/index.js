@@ -7,7 +7,7 @@ import Total from '@/components/Total'
 import Query from "@/components/Query";
 import Manager from "@/components/Manager";
 import Register from "@/components/Register";
-
+import Mute from "@/components/Mute";
 Vue.use(Router)
 
 let router = new Router({
@@ -46,6 +46,10 @@ let router = new Router({
         {
           path:'manager',
           component:Manager
+        },
+        {
+          path:'mute',
+          component:Mute
         }
       ]
     }

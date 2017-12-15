@@ -88,6 +88,11 @@ export default {
             type: "success",
             message: "读取成功!"
           });
+          console.log(response)
+          response.data.result.forEach(element => {
+            let tempTime = new Date(element.time);
+            element.time = tempTime.getFullYear()+"年"+tempTime.getMonth()+"月"+tempTime.getDay()+"日"+tempTime.getHours()+"时"+tempTime.getMinutes()+"分"+tempTime.getSeconds()
+          });
           self.danmuData = response.data.result;
           self.total = response.data.total;          
         })

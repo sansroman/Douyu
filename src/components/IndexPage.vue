@@ -49,9 +49,11 @@ export default {
   computed:{
       isSuper(){
           return this.roles.manager&&this.roles.manager>2
+        // return true
       },
       isAdmin(){
           return this.roles.query&&this.roles.query>2;
+        // return true
       }
   },
   methods:{
