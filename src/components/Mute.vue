@@ -86,8 +86,8 @@ export default {
   },
   mounted() {
     var Myechart = echarts.init(document.getElementById("echarts"));
-    this.init("http://127.0.0.1:3000/api/mute", Myechart);
-    this.update("http://127.0.0.1:3000/api/mute",Myechart,30*1000);
+    this.init("/api/mute", Myechart);
+    this.update("/api/mute",Myechart,30*1000);
   }
 };
 </script>  

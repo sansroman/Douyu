@@ -62,7 +62,7 @@ Client.prototype.formatData = function () {
             return
         }
         this.buf = this.buf.slice(msg_len)
-        let msg_array = single_msg.toString().match(/(type@=.*?)\x00/g)
+        let msg_array = single_msg.toString().match(/(type@=(chatmsg|newblackres).*?)\x00/g)
         if (msg_array) {
             msg_array.forEach(msg => {
                 msg = msg.replace(/@=/g, '":"')
@@ -85,6 +85,7 @@ Client.prototype.formatDanmu = function (msg) {
         console.log(error);
         console.log(msg);
     }
+    console.log(msg);
 
     return map;
 
@@ -149,8 +150,5 @@ function debackslashify(text) {
                 return b ? String.fromCharCode(parseInt(b, 16)) : escapes[c];  
             });  
 }
-
-
-
 
 module.exports = Client;
