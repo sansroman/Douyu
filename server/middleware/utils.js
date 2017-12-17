@@ -39,11 +39,6 @@ Client.prototype.init = function () {
     }, 45000);
 }
 Client.prototype.formatData = function () {
-    // const sliced = msg.slice(12).toString();
-    // // 减二删掉最后的'/'和'\0'
-    // const splited = sliced.substring(0, sliced.length - 2).split('/');
-    // const map = this.formatDanmu(splited);
-
     while (this.buf.length > 8) {
         let len_0 = this.buf.readInt16LE(0)
         let len_1 = this.buf.readInt16LE(4)
