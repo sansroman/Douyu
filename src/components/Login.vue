@@ -1,7 +1,7 @@
 <template>
   <div class="login"
     <el-row  class="layout">
-      <el-col :xl="{span:4,offset:10}" :xs="24" :sm="24" :md="24" :lg="{span:4,offset:10}">
+      <el-col :xl="{span:6,offset:9}" :xs="24" :sm="24" :md="24" :lg="{span:6,offset:9}">
         <div class="login-form">
           <el-form label-width="60px" label-position="right" ref="ruleForm" :rules="rules" :model="ruleForm" status-icon>
             <el-form-item label="账户" prop="username">
@@ -98,9 +98,9 @@
     margin-top: 300px;
   }
 
-  .login-form {
+  .el-col {
     background: #fff;
-    padding: 2em 2em 1em 2em;
+    padding: 2em;
   }
 
   .login-form label {

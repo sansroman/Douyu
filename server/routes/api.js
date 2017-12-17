@@ -86,11 +86,6 @@ router.put('/user', (req, res, next) => {
     manager: 3
   }
   next();
-}, authentication.role, (req, res, next) => {
-  req.roles = {
-    manager: 3
-  }
-  next();
 }, (req, res) => {
   let username = req.body.username || "";
   let role = req.body.role || "";
@@ -99,8 +94,6 @@ router.put('/user', (req, res, next) => {
       if (!results) {
         res.status(403).send('未找到该用户');
       } else {
-        console.log(username);
-        console.log(role);
         modifyUser(username, role)
           .then((result) => {
             res.status(200).send('修改成功');
