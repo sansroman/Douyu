@@ -113,11 +113,9 @@ function filter(map) {
 function chatmsg(data) {
     if (data.nn == null || data.rid == null || data.uid == null) console.log(data);
     else temp.push([data.rid, data.uid, data.nn, data.txt, new Date().getTime()]);
-    // console.log(temp);
 }
 
 function blackmsg(data) {
-    //处理禁言信息 
     if (data.rid == 154537) blacker_temp.push([data.sid, data.did, data.snic, data.dnic, data.endtime]);
 }
 
@@ -127,7 +125,7 @@ function InsertDb() {
         addDanmu(temp[index]);
     }
     for (let index in blacker_temp) {
-        addBlacker(temp[index]);        
+        addBlacker(blacker_temp[index]);        
     }
     blacker_temp = [];
     temp = [];

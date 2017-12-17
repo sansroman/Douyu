@@ -1,6 +1,12 @@
 <template>
   <div id="mute">
        <div id="echarts" :style="{width: '100%', height: '800px'}"></div>
+      <el-table v-loading :data="formData">
+        <el-table-column fixed prop="nn" label="用户名" width="150">
+        </el-table-column>
+        <el-table-column fixed prop="count" label="总数" width="150">
+        </el-table-column>
+      </el-table>
   </div>
 </template>
 
@@ -36,7 +42,7 @@ export default {
         xAxis: [
           {
             type: "category",
-            data:[],
+            data: [],
             axisTick: {
               alignWithLabel: true
             }
@@ -60,34 +66,46 @@ export default {
   },
   methods: {
     init(url, targetEl) {
-      axios.get(url)
+      axios
+        .get(url)
         .then(response => {
-          this.option.xAxis[0].data =response.data.nnList;
-          this.option.series[0].data = response.data.countList; 
-          console.log(this.option)
+          this.option.xAxis[0].data = response.data.nnList;
+          this.option.series[0].data = response.data.countList;
+          console.log(this.option);
           targetEl.setOption(this.option);
         })
-        .catch(err=>{
+        .catch(err => {
           console.log(err);
         });
     },
     update(url, targetEl, delay) {
       setInterval(() => {
-        axios.get(url)
+        axios
+          .get(url)
           .then(response => {
             this.option.xAxis[0].data = response.data.nnList;
-            this.option.series[0].data =response.data.countList;  
+            this.option.series[0].data = response.data.countList;
           })
-          .catch((err)=>{
+          .catch(err => {
             console.log(err);
           });
       }, delay);
     }
   },
+  computed:{
+    formData(){
+       let data = [];
+       this.option.xAxis[0].data.forEach((element,index)=>{
+         data.push({nn:element,count:this.option.series[0].data[index]})
+       })
+
+      return data;
+    }
+  },
   mounted() {
     var Myechart = echarts.init(document.getElementById("echarts"));
     this.init("/api/mute", Myechart);
-    this.update("/api/mute",Myechart,30*1000);
+    this.update("/api/mute", Myechart, 30 * 1000);
   }
 };
 </script>  
