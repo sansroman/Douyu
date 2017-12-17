@@ -85,7 +85,6 @@ Client.prototype.formatDanmu = function (msg) {
         console.log(error);
         console.log(msg);
     }
-    console.log(msg);
 
     return map;
 
