@@ -58,12 +58,13 @@ let exec = {
   },
   queryDanmuByUser(douyunn, cur,fuzzy) {
     return new Promise((resolve, reject) => {
-      countState = fuzzy?sql.getDanmuCountFuzzy:sql.getDanmuCount;
-      userState = fuzzy?sql.queryDanmuByUserFuzzy:sql.queryDanmuByUser;
+      let countState = fuzzy?sql.getDanmuCountFuzzy:sql.getDanmuCount;
+      let userState = fuzzy?sql.queryDanmuByUserFuzzy:sql.queryDanmuByUser;
+      let time = fuzzy?10000:3000;
       pool.getConnection((err, connection) => {
         connection.query({
           sql: countState,
-          timeout: 3000,
+          timeout: time,
           values: [douyunn]
         }, (error, count, fields) => {
           if (error) reject(error);
@@ -72,7 +73,7 @@ let exec = {
           pool.getConnection((err, connection) => {
             connection.query({
               sql: userState,
-              timeout: 5000,
+              timeout: time,
               values: [douyunn, cur, 20]
             }, (error, results, fields) => {
               result.result = results;
