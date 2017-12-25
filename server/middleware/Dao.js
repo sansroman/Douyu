@@ -68,7 +68,7 @@ let exec = {
           pool.getConnection((err, connection) => {
             connection.query({
               sql: sql.queryDanmuByUser,
-              timeout: 5000,
+              timeout: 20000,
               values: [douyunn, cur, 20]
             }, (error, results, fields) => {
               result.result = results;
