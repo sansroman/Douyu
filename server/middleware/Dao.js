@@ -8,11 +8,11 @@ const sql = {
   delUserByUsername: 'DELETE  FROM user WHERE username = ?',
   modifyUser: 'UPDATE user  set role = ? WHERE username = ?',
   queryDanmuByUser: 'SELECT rid,uid,nn,txt,time FROM danmu WHERE nn = ? LIMIT ?,?',
-  queryDanmuByUser: 'SELECT rid,uid,nn,txt,time FROM danmu LIKE nn = ? LIMIT ?,?',  
+  queryDanmuByUserFuzzy: 'SELECT rid,uid,nn,txt,time FROM danmu LIKE nn = ? LIMIT ?,?',  
   queryDanmuByUid: 'SELECT nn FROM danmu WHERE uid = ? GROUP BY nn',
   getUserCount: 'SELECT count(*) AS count FROM user ',
   getDanmuCount: 'SELECT count(*) AS count FROM  danmu WHERE nn = ?',
-  getDanmuCount: 'SELECT count(*) AS count FROM  danmu LIKE nn = ?',  
+  getDanmuCountFuzzy: 'SELECT count(*) AS count FROM  danmu LIKE nn = ?',  
   addDanmu: 'INSERT INTO danmu(rid,uid,nn,txt,time) VALUES (?,?,?,?,?)',
   addBlacker: 'INSERT INTO blacker(sid,did,snic,dnic,endtime) VALUES(?,?,?,?,?)',
   getMute:"SELECT snic,count(*) AS count FROM blacker GROUP BY snic ORDER BY count(*) DESC"
@@ -62,7 +62,7 @@ let exec = {
       userState = fuzzy?sql.queryDanmuByUserFuzzy:sql.queryDanmuByUser;
       pool.getConnection((err, connection) => {
         connection.query({
-          sql: sql.getDanmuCount,
+          sql: countState,
           timeout: 3000,
           values: [douyunn]
         }, (error, count, fields) => {
@@ -71,7 +71,7 @@ let exec = {
           result.total = count?count[0].count:0;
           pool.getConnection((err, connection) => {
             connection.query({
-              sql: sql.queryDanmuByUser,
+              sql: userState,
               timeout: 5000,
               values: [douyunn, cur, 20]
             }, (error, results, fields) => {
