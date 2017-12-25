@@ -58,7 +58,7 @@ export default {
   data() {
     return {
       querytext: "",
-      select: 0,
+      select: "0",
       danmuData: [],
       gridData: [],
       total: 0,
