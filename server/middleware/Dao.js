@@ -76,6 +76,7 @@ let exec = {
               connection.release();
             });
           });
+          connection.release();          
         });
 
       });

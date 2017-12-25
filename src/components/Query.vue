@@ -14,7 +14,11 @@
       </el-table-column>
       <el-table-column prop="txt" label="发言" width="300">
       </el-table-column>
-      <el-table-column prop="time" label="时间" width="140">
+      <el-table-column label="时间" width="140">
+          <template slot-scope="scope">
+            <p>{{scope.row.date}}</p>
+            <p>{{ scope.row.time}}</p>
+          </template>
       </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
@@ -51,19 +55,18 @@ export default {
     return {
       querytext: "",
       select: "",
-      danmuData:[],
-      gridData:[],
-      total:0,
-      currentPage:0,
-
+      danmuData: [],
+      gridData: [],
+      total: 0,
+      currentPage: 0
     };
   },
   methods: {
     query() {
       this.handleCurrentChange(1);
     },
-    find(data){
-      let self =this;
+    find(data) {
+      let self = this;
       axios
         .get("/api/danmu?uid=" + data.uid)
         .then(function(response) {
@@ -76,37 +79,36 @@ export default {
         .catch(function(error) {
           self.$message.error(error.response.data);
         });
-
     },
-    handleCurrentChange(cur){
-      cur = cur-1;
-      let self =this;
-      axios      
-        .get("/api/danmu?douyunn=" + self.querytext+"&cur="+cur)
+    handleCurrentChange(cur) {
+      cur = cur - 1;
+      let self = this;
+      axios
+        .get("/api/danmu?douyunn=" + self.querytext + "&cur=" + cur)
         .then(function(response) {
           self.$message({
             type: "success",
             message: "读取成功!"
           });
-          console.log(response)
           response.data.result.forEach(element => {
             let tempTime = new Date(element.time);
-            element.time = tempTime.getFullYear()+"年"+tempTime.getMonth()+"月"+tempTime.getDay()+"日"+tempTime.getHours()+"时"+tempTime.getMinutes()+"分"+tempTime.getSeconds()
+            element.date = tempTime.toLocaleDateString();
+            element.time = tempTime.toLocaleTimeString();
           });
           self.danmuData = response.data.result;
-          self.total = response.data.total;          
+          self.total = response.data.total;
         })
         .catch(function(error) {
           self.$message.error(error.response.data);
         });
     }
   },
-  computed:{
-    isHiddle(){
-      return this.danmuData.length!==0;
+  computed: {
+    isHiddle() {
+      return this.danmuData.length !== 0;
     },
-    hasData(){
-      return this.isHiddle?false:true;
+    hasData() {
+      return this.isHiddle ? false : true;
     }
   }
 };
@@ -122,9 +124,9 @@ export default {
 .input-with-select .el-input-group__prepend {
   background-color: #fff;
 }
-.data{
-  width: 30.0%;
-  margin-left:35%;
+.data {
+  width: 30%;
+  margin-left: 35%;
   margin-top: 10%;
 }
 </style>
