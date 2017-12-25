@@ -58,8 +58,8 @@ let exec = {
   },
   queryDanmuByUser(douyunn, cur,fuzzy) {
     return new Promise((resolve, reject) => {
-      countState = fuzzy?sql.getDanmuCount:sql.getDanmuCountFuzzy;
-      userState = fuzzy?sql.queryDanmuByUser:sql.queryDanmuByUserFuzzy;
+      countState = fuzzy?sql.getDanmuCountFuzzy:sql.getDanmuCount;
+      userState = fuzzy?sql.queryDanmuByUserFuzzy:sql.queryDanmuByUser;
       pool.getConnection((err, connection) => {
         connection.query({
           sql: sql.getDanmuCount,
