@@ -64,7 +64,7 @@ let exec = {
         }, (error, count, fields) => {
           if (error) reject(error);
           let result = {
-            total: count[0].count||0;
+            total: count[0].count||0
           }
           pool.getConnection((err, connection) => {
             connection.query({
