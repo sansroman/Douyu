@@ -8,11 +8,11 @@ const sql = {
   delUserByUsername: 'DELETE  FROM user WHERE username = ?',
   modifyUser: 'UPDATE user  set role = ? WHERE username = ?',
   queryDanmuByUser: 'SELECT rid,uid,nn,txt,time FROM danmu WHERE nn = ? LIMIT ?,?',
-  queryDanmuByUserFuzzy: 'SELECT rid,uid,nn,txt,time FROM danmu LIKE nn = ? LIMIT ?,?',  
+  queryDanmuByUserFuzzy: 'SELECT rid,uid,nn,txt,time FROM danmu WHERE nn LIKE ? LIMIT ?,?',  
   queryDanmuByUid: 'SELECT nn FROM danmu WHERE uid = ? GROUP BY nn',
   getUserCount: 'SELECT count(*) AS count FROM user ',
   getDanmuCount: 'SELECT count(*) AS count FROM  danmu WHERE nn = ?',
-  getDanmuCountFuzzy: 'SELECT count(*) AS count FROM  danmu LIKE nn = ?',  
+  getDanmuCountFuzzy: 'SELECT count(*) AS count FROM  danmu WHERE nn LIKE ?',  
   addDanmu: 'INSERT INTO danmu(rid,uid,nn,txt,time) VALUES (?,?,?,?,?)',
   addBlacker: 'INSERT INTO blacker(sid,did,snic,dnic,endtime) VALUES(?,?,?,?,?)',
   getMute:"SELECT snic,count(*) AS count FROM blacker GROUP BY snic ORDER BY count(*) DESC"
