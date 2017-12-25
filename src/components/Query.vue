@@ -87,7 +87,7 @@ export default {
     },
     handleCurrentChange(cur) {
       cur = cur - 1;
-      if(this.select==1)cur = cur+"&fuzzy";
+      if(this.select==1)cur = cur+"&fuzzy=true";
       let self = this;
       axios
         .get("/api/danmu?douyunn=" + self.querytext + "&cur=" + cur)

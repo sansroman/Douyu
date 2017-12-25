@@ -17,8 +17,7 @@ router.get('/danmu', (req, res, next) => {
   }
   next();
 }, authentication.role, (req, res) => {
-  let fuzzy = req.query.fuzzy?true:false;
-  console.log(req.query.fuzzy);
+  let fuzzy = req.query.fuzzy||false;
   let douyunn = req.query.douyunn || "";
   douyunn = fuzzy?"%"+douyunn+"%":douyunn;
   if (douyunn) {
