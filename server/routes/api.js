@@ -20,7 +20,8 @@ router.get('/danmu', (req, res, next) => {
   let douyunn = req.query.douyunn || "";
   if (douyunn) {
     let cur = req.query.cur * 20 || 0;
-    queryDanmuByUser(douyunn, cur).then((results) => {
+    let fuzzy = req.query.fuzzy || false;
+    queryDanmuByUser(douyunn, cur,fuzzy).then((results) => {
         if (results.total == 0) res.status(404).send("未找到记录");
         else res.status(200).send(results);
       })

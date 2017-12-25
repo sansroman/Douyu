@@ -2,6 +2,10 @@
   <div id="query">
         <div :class="{data:hasData}">
         <el-input placeholder="请输入斗鱼ID" v-model="querytext" class="input-with-select">
+            <el-select v-model="select" slot="prepend" placeholder="请选择">
+              <el-option label="精确搜索" value="0"></el-option>
+              <el-option label="模糊搜索" value="1"></el-option>
+            </el-select>
             <el-button slot="append" icon="el-icon-search" @click="query"></el-button>
         </el-input>
         </div>
@@ -54,7 +58,7 @@ export default {
   data() {
     return {
       querytext: "",
-      select: "",
+      select: 0,
       danmuData: [],
       gridData: [],
       total: 0,
@@ -77,11 +81,13 @@ export default {
           self.gridData = response.data;
         })
         .catch(function(error) {
+          self.gridData = [];
           self.$message.error(error.response.data);
         });
     },
     handleCurrentChange(cur) {
       cur = cur - 1;
+      if(this.select==1)cur = cur+"&fuzzy";
       let self = this;
       axios
         .get("/api/danmu?douyunn=" + self.querytext + "&cur=" + cur)
