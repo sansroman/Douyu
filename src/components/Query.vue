@@ -2,19 +2,27 @@
   <div id="query">
         <div :class="{data:hasData}">
         <el-input placeholder="请输入斗鱼ID" v-model="querytext" class="input-with-select">
+            <el-select v-model="select" slot="prepend" placeholder="请选择">
+              <el-option label="德云色" value="1"></el-option>
+              <el-option label="全部" value="2"></el-option>
+            </el-select>
             <el-button slot="append" icon="el-icon-search" @click="query"></el-button>
         </el-input>
         </div>
-    <el-table v-loading :data="danmuData" v-show="isHiddle">
-      <el-table-column fixed prop="nn" label="斗鱼ID" width="150">
+    <el-table 
+      v-loading 
+      :data="danmuData" 
+      v-show="isHiddle"
+      >
+      <el-table-column :fixed="this.$root.$data.isMoblie？"left":false" prop="nn" label="斗鱼ID" width="100">
       </el-table-column>
-      <el-table-column fixed prop="rid" label="房间号" width="80">
+      <el-table-column prop="rid" label="房间号" width="80">
       </el-table-column>
       <el-table-column prop="uid" label="斗鱼UID" width="100">
       </el-table-column>
-      <el-table-column prop="txt" label="发言" width="300">
+      <el-table-column prop="time" label="时间" width="120">
       </el-table-column>
-      <el-table-column prop="time" label="时间" width="140">
+      <el-table-column prop="txt" label="发言" width="300">
       </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
@@ -50,11 +58,12 @@ export default {
   data() {
     return {
       querytext: "",
-      select: "",
+      radio:"",
+      select: "1",
       danmuData:[],
       gridData:[],
       total:0,
-      currentPage:0,
+      currentPage:0
 
     };
   },
@@ -81,6 +90,7 @@ export default {
     handleCurrentChange(cur){
       cur = cur-1;
       let self =this;
+      if(this.select=="1")cur=cur+"&only=true"
       axios      
         .get("/api/danmu?douyunn=" + self.querytext+"&cur="+cur)
         .then(function(response) {
@@ -122,9 +132,5 @@ export default {
 .input-with-select .el-input-group__prepend {
   background-color: #fff;
 }
-.data{
-  width: 30.0%;
-  margin-left:35%;
-  margin-top: 10%;
-}
+
 </style>

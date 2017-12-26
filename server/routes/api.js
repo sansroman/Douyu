@@ -18,6 +18,7 @@ router.get('/danmu', (req, res, next) => {
   next();
 }, authentication.role, (req, res) => {
   let douyunn = req.query.douyunn || "";
+  let only = req.query.only || "";
   if (douyunn) {
     let cur = req.query.cur * 20 || 0;
     queryDanmuByUser(douyunn, cur).then((results) => {

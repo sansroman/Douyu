@@ -1,9 +1,9 @@
 <template>
   <div class="index">
       <el-container>
-            <el-aside
-            width="10em">
+            <el-aside width="100">
                 <el-menu
+                :collapse="this.$root.$data.isMoblie"
                 default-active="total"
                 background-color="#545c64"
                 text-color="#fff"
@@ -48,12 +48,12 @@ export default {
   },
   computed:{
       isSuper(){
-          return this.roles.manager&&this.roles.manager>2
-        // return true
+        //   return this.roles.manager&&this.roles.manager>2
+        return true
       },
       isAdmin(){
-          return this.roles.query&&this.roles.query>2;
-        // return true
+        //   return this.roles.query&&this.roles.query>2;
+        return true
       }
   },
   methods:{
