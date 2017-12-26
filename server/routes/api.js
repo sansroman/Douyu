@@ -17,11 +17,17 @@ router.get('/danmu', (req, res, next) => {
   }
   next();
 }, authentication.role, (req, res) => {
+  let fuzzy = req.query.fuzzy||false;
+  console.log(fuzzy);
   let douyunn = req.query.douyunn || "";
+<<<<<<< HEAD
   let only = req.query.only || "";
+=======
+  douyunn = fuzzy?"%"+douyunn+"%":douyunn;
+>>>>>>> b8fd564760d13e2103ec4b87b21db893f21b18d6
   if (douyunn) {
     let cur = req.query.cur * 20 || 0;
-    queryDanmuByUser(douyunn, cur).then((results) => {
+    queryDanmuByUser(douyunn, cur,fuzzy).then((results) => {
         if (results.total == 0) res.status(404).send("未找到记录");
         else res.status(200).send(results);
       })

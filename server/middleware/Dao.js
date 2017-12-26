@@ -8,9 +8,11 @@ const sql = {
   delUserByUsername: 'DELETE  FROM user WHERE username = ?',
   modifyUser: 'UPDATE user  set role = ? WHERE username = ?',
   queryDanmuByUser: 'SELECT rid,uid,nn,txt,time FROM danmu WHERE nn = ? LIMIT ?,?',
+  queryDanmuByUserFuzzy: 'SELECT rid,uid,nn,txt,time FROM danmu WHERE nn LIKE ? LIMIT ?,?',  
   queryDanmuByUid: 'SELECT nn FROM danmu WHERE uid = ? GROUP BY nn',
   getUserCount: 'SELECT count(*) AS count FROM user ',
   getDanmuCount: 'SELECT count(*) AS count FROM  danmu WHERE nn = ?',
+  getDanmuCountFuzzy: 'SELECT count(*) AS count FROM  danmu WHERE nn LIKE ?',  
   addDanmu: 'INSERT INTO danmu(rid,uid,nn,txt,time) VALUES (?,?,?,?,?)',
   addBlacker: 'INSERT INTO blacker(sid,did,snic,dnic,endtime) VALUES(?,?,?,?,?)',
   getMute:"SELECT snic,count(*) AS count FROM blacker GROUP BY snic ORDER BY count(*) DESC"
@@ -54,22 +56,24 @@ let exec = {
       connection.release();
     })
   },
-  queryDanmuByUser(douyunn, cur) {
+  queryDanmuByUser(douyunn, cur,fuzzy) {
     return new Promise((resolve, reject) => {
+      let countState = fuzzy?sql.getDanmuCountFuzzy:sql.getDanmuCount;
+      let userState = fuzzy?sql.queryDanmuByUserFuzzy:sql.queryDanmuByUser;
+      let time = fuzzy?10000:3000;
       pool.getConnection((err, connection) => {
         connection.query({
-          sql: sql.getDanmuCount,
-          timeout: 2000,
+          sql: countState,
+          timeout: time,
           values: [douyunn]
         }, (error, count, fields) => {
           if (error) reject(error);
-          let result = {
-            total: count[0].count
-          }
+          let result ={};
+          result.total = count?count[0].count:0;
           pool.getConnection((err, connection) => {
             connection.query({
-              sql: sql.queryDanmuByUser,
-              timeout: 5000,
+              sql: userState,
+              timeout: time,
               values: [douyunn, cur, 20]
             }, (error, results, fields) => {
               result.result = results;
@@ -77,6 +81,7 @@ let exec = {
               connection.release();
             });
           });
+          connection.release();          
         });
 
       });
