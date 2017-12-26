@@ -1,6 +1,6 @@
 <template>
   <div id="query">
-        <div :class="{data:hasData}">
+        <div :class="{data:hasData||this.$root.$data.isMoblie}" class="search">
         <el-input placeholder="请输入斗鱼ID" v-model="querytext" class="input-with-select">
             <el-select v-model="select" slot="prepend" placeholder="请选择">
               <el-option label="精确搜索" value="0"></el-option>
@@ -20,7 +20,7 @@
       </el-table-column>
       <el-table-column prop="uid" label="斗鱼UID" width="100">
       </el-table-column>
-      <el-table-column prop="time" label="时间" width="120">
+      <el-table-column prop="txt" label="发言" width="300">
       </el-table-column>
       <el-table-column label="时间" width="140">
           <template slot-scope="scope">
@@ -48,6 +48,7 @@
       v-show="isHiddle"
       layout="prev, pager, next"
       @current-change="handleCurrentChange"
+      :small="this.$root.$data.isMoblie"
       :current-page="currentPage"
       :page-size=20
       :total='total'>
@@ -115,10 +116,10 @@ export default {
   },
   computed: {
     isHiddle() {
-      return this.danmuData.length !== 0;
+      return this.hasData ?true:false;
     },
     hasData() {
-      return this.isHiddle ? false : true;
+      return this.danmuData.length !== 0;
     }
   }
 };
@@ -134,9 +135,15 @@ export default {
 .input-with-select .el-input-group__prepend {
   background-color: #fff;
 }
-.data {
+.search{
   width: 30%;
   margin-left: 35%;
   margin-top: 10%;
 }
+.data.search{
+  width: 100%;
+  margin-left: 0%;
+  margin-top: 0%;
+}
+
 </style>

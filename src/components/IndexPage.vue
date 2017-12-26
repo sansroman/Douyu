@@ -21,7 +21,7 @@
                     <i class="el-icon-menu"></i>                    
                     <span slot="title">用户管理</span>
                 </el-menu-item>
-                <el-menu-item v-show="isAdmin" index="/index/mute">
+                <el-menu-item v-show="isSuper" index="/index/mute">
                     <i class="el-icon-menu"></i>                    
                     <span slot="title">禁言查询</span>
                 </el-menu-item>              
