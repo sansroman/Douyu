@@ -59,7 +59,6 @@ export default {
     mounted () {
     var Myechart = echarts.init(document.getElementById('echarts'))
     this.init("http://127.0.0.1:3000/api/line",Myechart)
-    // this.update('http://127.0.0.1:3000/api/update',Myechart,3000)
   }  
 }
 </script>  

@@ -69,7 +69,12 @@
                   "roles",
                   JSON.stringify(response.data.roles)
                 );
-                selt.$router.push("/index");
+                if(response.data.roles.manager==3)selt.$router.push("/index/total");
+                else if(response.data.roles.query==3){
+                  selt.$router.push("/index/query");
+                }else{
+                  selt.$router.push("index");
+                }
               })
               .catch(function (error) {
                 selt.$message.error(error.response.data);

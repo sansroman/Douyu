@@ -1,5 +1,9 @@
 var express = require('express');
 var router = express.Router();
+var now = require('moment')();
+var query = require('../middleware/statistics').query;
+var users = require('../middleware/statistics').users;
+
 var authentication = require('../authentication');
 let getAllUser = require('../middleware/Dao').getAllUser;
 let delUserByUsername = require('../middleware/Dao').delUserByUsername;
@@ -9,16 +13,27 @@ let queryDanmuByUser = require('../middleware/Dao').queryDanmuByUser;
 let queryDanmuByUid = require('../middleware/Dao').queryDanmuByUid;
 let GetMuteList = require('../middleware/Dao').GetMuteList;
 
+router.get('/statistics',(req,res,next)=>{
+  req.roles = {
+    manager: 3
+  }
+  next();
+},authentication.role,(req,res)=>{
+  query.get([now.format('YYYYMMDD')], function (err, results) {
+    var queryCount = results[0];
+    res.json({queryCount:queryCount});
+  });
+})
 
 
 router.get('/danmu', (req, res, next) => {
+  query.incr();
   req.roles = {
     query: 3
   }
   next();
 }, authentication.role, (req, res) => {
   let fuzzy = req.query.fuzzy||false;
-  console.log(fuzzy);
   let douyunn = req.query.douyunn || "";
   douyunn = fuzzy?"%"+douyunn+"%":douyunn;
   if (douyunn) {
