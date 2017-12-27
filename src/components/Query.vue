@@ -75,7 +75,6 @@ export default {
   methods: {
     query() {
       this.handleCurrentChange(1);
-      this.first = true;
     },
     find(data) {
       let self = this;
