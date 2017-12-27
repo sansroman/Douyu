@@ -4,7 +4,7 @@ const sql = {
   queryUserByUser: "SELECT a.password,a.douyunn,b.query,b.manager,b.total FROM user a LEFT JOIN role b on a.role = b.role WHERE username = ?",
   queryUser: "SELECT a.password,a.douyunn,b.query,b.manager,b.total FROM user a LEFT JOIN role b on a.role = b.role WHERE username = ? OR douyunn = ?",
   addUser: 'INSERT INTO user (username,password,douyunn) VALUES (?,?,?)',
-  getAllUser: 'SELECT username,douyunn,uid,role FROM user LIMIT ?,? ORDER BY role',
+  getAllUser: 'SELECT username,douyunn,uid,role FROM user ORDER BY role LIMIT ?,? ',
   delUserByUsername: 'DELETE  FROM user WHERE username = ?',
   modifyUser: 'UPDATE user  set role = ? WHERE username = ?',
   queryDanmuByUser: 'SELECT rid,uid,nn,txt,time FROM danmu WHERE nn = ? LIMIT ?,?',
