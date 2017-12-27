@@ -67,7 +67,7 @@ export default {
       danmuData: [],
       gridData: [],
       total: 0,
-      currentPage: 0,
+      currentPage: 1,
       first:false
     };
   },
@@ -77,7 +77,6 @@ export default {
       this.first = true;
     },
     find(data) {
-      if(first==true) return;
       let self = this;
       axios
         .get("/api/danmu?uid=" + data.uid)
