@@ -10,7 +10,8 @@
         </el-input>
         </div>
     <el-table 
-      v-loading 
+      stripe
+      border
       :data="danmuData" 
       v-show="isHiddle"
       >

@@ -15,6 +15,9 @@ let router = new Router({
     {
       path:'/',
       redirect:'login'
+    },{
+      path:'',
+      redirect:'login'
     },
     {
       path:'/register',

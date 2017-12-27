@@ -1,70 +1,73 @@
 <template>
   <div id="total">
-       <div id="echarts"></div>
+       <h2>Dashborad</h2>
+       <el-row>
+         <el-col :md="3" :xs="12" :sm="6" class="stats-container">
+              <div class="stats-heading">今日访客</div>
+              <div class="stats-body-alt"> 
+                <div class="text-center">
+                  <span class="text-top"></span>{{statistics.views}}
+                </div>
+              </div>
+              <div class="stats-footer">more info</div>
+         </el-col>
+          <el-col :md="3" :xs="12" :sm="6" class="stats-container">
+              <div class="stats-heading">今日查询</div>
+              <div class="stats-body-alt"> 
+                <div class="text-center">
+                  <span class="text-top"></span>{{statistics.queryCount}}
+                </div>
+              </div>
+              <div class="stats-footer">more info</div>
+         </el-col>
+       </el-row>
+
   </div>
 </template>
 
 
-<style>
-#query {
-  color: #2c3e50;
+<style scoped>
+.stats-container{    display: block;    margin: 0 0 20px;}
+.stats-heading {    background-color:rgba(0,0,0,0.3);    border-top-left-radius: 2px;    border-top-right-radius: 2px;    letter-spacing: 0.04em;    padding: 5px 10px;    text-align: center;    text-transform: uppercase;}
+.stats-body-alt {    background-color:rgba(0,0,0,0.4);    border-bottom-left-radius: 0;    border-bottom-right-radius: 0;    font-size: 48px;    font-weight: 300;    padding: 10px;}
+.stats-body-alt .text-center {    margin-top: -5px;}
+.stats-body-alt .text-top {    font-size: 24px;    vertical-align: super;}
+.stats-body-alt div + small {    display: block;    font-size: 14px;    font-weight: 400;    margin-bottom: 4px;    margin-top: -7px;    opacity: 0.7;    text-align: center;}
+.stats-body-alt div + small {    display: block;    font-size: 14px;    font-weight: 400;    margin-bottom: 4px;    margin-top: -7px;    opacity: 0.7;    text-align: center;}
+.stats-footer {    border-bottom-left-radius: 2px;    border-bottom-right-radius: 2px;    color: rgba(255, 255, 255, 0.4);    padding: 5px 10px; 	background-color:rgba(0,0,0,0.5);}
+h2{
+  margin: 20px 0;
+}
+.el-col{
+    position: relative;
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px;
 }
 </style>
 
 
 <script>
-import echarts from 'echarts'
+import axios from "axios";
 export default {
-    name: 'total',
-  data () {
+  name: "total",
+  data() {
     return {
-    }
-  },
-  methods:{
-    pullDate(url,callback){
-      function doIt(){
-        clearTimeout(timer);
-        timer = setTimeout(doIt,5000);
-        fetch(url)
-          .then(res=>{
-                return res.json()})
-          .then((json=>{
-                console.log(json);
-                callback(json);
-          }))
+      statistics:{
+        views:0,
+        queryCount:0
       }
-      var timer = setTimeout(doIt,5000);
-    },
-    init(url,targetEl){
-      fetch(url)
-        .then(res=>{
-          return res.json()
-        })
-        .then(json=>{
-          targetEl.setOption(json)
-        })
-    },
-    update(url,targetEl,delay){
-      setInterval(()=>{
-        fetch(url)
-          .then(res=>{
-                return res.json()})
-          .then((json=>{
-                console.log(json);
-                targetEl.setOption(json)
-          }))
-      },delay)
-    }
+    };
   },
-    mounted () {
-    var Myechart = echarts.init(document.getElementById('echarts'))
-    this.init("http://127.0.0.1:3000/api/line",Myechart)
-  }  
-}
+  mounted() {
+    let self = this;
+    axios
+    .get("/api/statistics")
+    .then(function (response) {
+      self.statistics = response.data;
+    }).catch((err)=>{
+      selt.$message.error(error.response.data);
+    })
+  }
+};
 </script>  
-<style>
-#echarts{
-    height:300px;
-    width:500px;
-}
-</style>

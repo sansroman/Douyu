@@ -16,11 +16,13 @@ export default {
 html,body{
   height: 100%;
   overflow:hidden;
-    width: 100%;
-  background: #e6e6e6;
+  width: 100%;
+  background-color: #54364a;
+  background-size: cover;
+  background-image:url(./assets/a.jpg);
 }
 #app {
-  color: #2c3e50;
+  color: #fff;
   min-height: 600px;
   height: 100%;
 }

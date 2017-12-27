@@ -1,6 +1,7 @@
 let findOneByUser = require('../middleware/Dao').findOneByUser;
 let findOne = require('../middleware/Dao').findOne;
 let addUser = require('../middleware/Dao').addUser;
+let users = require('../middleware/statistics').users;
 
 
 let bcrypt = require('bcrypt');
@@ -41,6 +42,7 @@ let authentication = {
         })
     },
     auth(req,res){
+        users.incr();
         let username = req.body.username||"";
         let password = req.body.password||"";
         let message ={};
