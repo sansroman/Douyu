@@ -133,7 +133,7 @@ let exec = {
       });
     })
   },
-  getAllUser() {
+  getAllUser(cur) {
     return new Promise((resolve, reject) => {
       pool.getConnection((err, connection) => {
         connection.query({
@@ -147,7 +147,7 @@ let exec = {
             connection.query({
               sql: sql.getAllUser,
               timeout: 4000,
-              values: [0, 20]
+              values: [cur, 20]
             }, (error, results, fields) => {
               if (error) reject(error);
               result.result = results;

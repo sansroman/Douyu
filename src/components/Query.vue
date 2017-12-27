@@ -68,8 +68,7 @@ export default {
       danmuData: [],
       gridData: [],
       total: 0,
-      currentPage: 1,
-      first:false
+      currentPage: 1
     };
   },
   methods: {
