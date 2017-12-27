@@ -118,7 +118,7 @@ router.put('/user', (req, res, next) => {
 
 router.get('/mute', (req, res, next) => {
   req.roles = {
-    manager: 3
+    query: 3
   }
   next();
 }, authentication.role, (req, res, next) => {
