@@ -4,7 +4,7 @@
       :data="userData"
       :default-sort = "{prop: 'role', order: 'descending'}"
     >
-      <el-table-column sortable fixed prop="username" label="用户名" width="150">
+      <el-table-column sortable :fixed="this.$root.$data.isMoblie" prop="username" label="用户名" width="150">
       </el-table-column>
       <el-table-column prop="douyunn" label="斗鱼ID" width="120">
       </el-table-column>

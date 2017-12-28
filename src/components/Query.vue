@@ -15,7 +15,7 @@
       :data="danmuData" 
       v-show="isHiddle"
       >
-      <el-table-column :fixed="this.$root.$data.isMoblie？"left":false" prop="nn" label="斗鱼ID" width="100">
+      <el-table-column :fixed="this.$root.$data.isMoblie" prop="nn" label="斗鱼ID" width="100">
       </el-table-column>
       <el-table-column prop="rid" label="房间号" width="80">
       </el-table-column>
