@@ -77,7 +77,6 @@ export default {
       this.first = true;
     },
     find(data) {
-      if(first==true) return;
       let self = this;
       axios
         .get("/api/danmu?uid=" + data.uid)
@@ -95,6 +94,7 @@ export default {
     },
     handleCurrentChange(cur) {
       cur = cur - 1;
+      if(first==true) return;      
       if(this.select==1)cur = cur+"&fuzzy=true";
       let self = this;
       axios
