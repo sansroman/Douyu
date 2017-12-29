@@ -106,6 +106,7 @@
   .el-col {
     background: #fff;
     padding: 2em;
+    opacity: 0.9;
   }
 
   .login-form label {

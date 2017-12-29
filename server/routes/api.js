@@ -3,7 +3,6 @@ var router = express.Router();
 var now = require('moment')();
 var query = require('../middleware/statistics').query;
 var users = require('../middleware/statistics').users;
-
 var authentication = require('../authentication');
 let getAllUser = require('../middleware/Dao').getAllUser;
 let delUserByUsername = require('../middleware/Dao').delUserByUsername;
@@ -19,10 +18,22 @@ router.get('/statistics',(req,res,next)=>{
   }
   next();
 },authentication.role,(req,res)=>{
-  query.get([now.format('YYYYMMDD')], function (err, results) {
-    var queryCount = results[0];
-    res.json({queryCount:queryCount});
-  });
+
+    query.get([now.format('YYYYMMDD')], function (err, results) {
+      let queryCount = results[0];
+      users.get([now.format('YYYYMMDD')], function (err, results) {
+        console.log(results)
+        let temp ={
+          queryCount:queryCount||0,
+          views:results[0]||0
+        }
+        res.json(temp);
+      }) 
+    });
+  
+
+
+
 })
 
 

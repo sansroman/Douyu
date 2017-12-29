@@ -4,7 +4,7 @@
       :data="userData"
       :default-sort = "{prop: 'role', order: 'descending'}"
     >
-      <el-table-column sortable fixed prop="username" label="用户名" width="150">
+      <el-table-column sortable :fixed="this.$root.$data.isMoblie" prop="username" label="用户名" width="150">
       </el-table-column>
       <el-table-column prop="douyunn" label="斗鱼ID" width="120">
       </el-table-column>
@@ -29,9 +29,11 @@
     </el-table>
     <el-pagination
       background
-      layout="prev, pager, next"
-       @current-change="handleCurrentChange"
       v-show='isHiddle'
+      layout="prev, pager, next"
+      @current-change="handleCurrentChange"
+      :small="this.$root.$data.isMoblie"
+      :current-page="currentPage"
       :page-size="20"
       :total='total'>
     </el-pagination>
@@ -59,7 +61,9 @@
             value: 2,
             label: "游客"
           }
-        ]
+        ],
+        total: 0,
+        currentPage: 1,
       };
     },
     methods: {
@@ -94,10 +98,12 @@
       },
       handleCurrentChange(cur){
         let self = this;
+        cur--;
         axios
           .get("/api/allUser?cur="+cur)
           .then(function (response) {
-            self.userData = response.data;
+            self.userData = response.data.result;
+            self.total = response.data.total
           })
           .catch(function (error) {
             self.$message.error(error.response.data);
@@ -137,15 +143,16 @@
       }
     },
     mounted() {
-      let self = this;
-      axios
-        .get("/api/allUser")
-        .then(function (response) {
-          self.userData = response.data;
-        })
-        .catch(function (error) {
-          self.$message.error(error);
-        });
+      // let self = this;
+      // axios
+      //   .get("/api/allUser")
+      //   .then(function (response) {
+      //     self.userData = response.data;
+      //   })
+      //   .catch(function (error) {
+      //     self.$message.error(error);
+      //   });
+      this.handleCurrentChange(1);
     },
     computed:{
       total(){

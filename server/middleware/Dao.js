@@ -133,20 +133,32 @@ let exec = {
       });
     })
   },
-  getAllUser() {
+  getAllUser(cur) {
     return new Promise((resolve, reject) => {
       pool.getConnection((err, connection) => {
         connection.query({
-          sql: sql.getAllUser,
-          timeout: 4000,
-          values: [0, 20]
-        }, (error, results, fields) => {
+          sql: sql.getUserCount,
+          timeout: 3000,
+        }, (error, count, fields) => {
           if (error) reject(error);
-          resolve(results);
-          connection.release();
+          let result ={};
+          result.total = count?count[0].count:0;
+          pool.getConnection((err, connection) => {
+            connection.query({
+              sql: sql.getAllUser,
+              timeout: 4000,
+              values: [cur, 20]
+            }, (error, results, fields) => {
+              if (error) reject(error);
+              result.result = results;
+              resolve(result);
+              connection.release();
+            });
+          });
+          connection.release();          
         });
       });
-    })
+    });
   },
   addUser(userInfo) {
     return new Promise((resolve, reject) => {
