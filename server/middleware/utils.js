@@ -1,4 +1,5 @@
 const net = require('net');
+const io = require('socket.io-client');
 let addDanmu = require('./Dao').addDanmu;
 let addBlacker = require('./Dao').addBlacker;
 
@@ -30,6 +31,14 @@ Client.prototype.init = function () {
     });
     s.on('error', (err) => {
         console.log(err);
+        s.destroy();
+        let s = net.connect({
+            port: 8601,
+            host: 'openbarrage.douyutv.com'
+        }, () => {
+            console.log('connect success');
+        });
+        
     });
     setInterval(() => {
         let timestamp = parseInt(new Date() / 1000);

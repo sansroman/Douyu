@@ -14,6 +14,7 @@
       border
       :data="danmuData" 
       v-show="isHiddle"
+      :row-class-name="tableRowClassName"
       >
       <el-table-column :fixed="this.$root.$data.isMoblie" prop="nn" label="斗鱼ID" width="100">
       </el-table-column>
@@ -72,6 +73,10 @@ export default {
     };
   },
   methods: {
+    tableRowClassName({row, rowIndex}) {
+        if (row.rid === 154537)  return 'warning-row';
+        else return '';
+    },
     query() {
       this.handleCurrentChange(1);
     },
@@ -92,8 +97,7 @@ export default {
         });
     },
     handleCurrentChange(cur) {
-      cur = cur - 1;
-      if(first==true) return;      
+      cur = cur - 1;    
       if(this.select==1)cur = cur+"&fuzzy=true";
       let self = this;
       axios
@@ -147,5 +151,12 @@ export default {
   margin-left: 0%;
   margin-top: 0%;
 }
+  .el-table .warning-row {
+    background: oldlace;
+  }
+
+  .el-table .success-row {
+    background: #f0f9eb;
+  }
 
 </style>
