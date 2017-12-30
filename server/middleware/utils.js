@@ -1,5 +1,4 @@
 const net = require('net');
-const io = require('socket.io-client');
 let addDanmu = require('./Dao').addDanmu;
 let addBlacker = require('./Dao').addBlacker;
 
@@ -8,7 +7,42 @@ let temp =[],
 function Client(roomid) {
     this.roomid = roomid;
     this.buf = Buffer.alloc(0)
+    this.init();
 }
+
+function replaceAll(str,search,replacement){
+		if(str == null || str.length <= 0) {
+			return "";
+		}
+	    return str.replace(new RegExp(search, 'g'), replacement);
+}
+function unescape(field){
+    if(!field || field.length <= 0) {
+        return "";
+    }
+    field = "" + field
+    field = replaceAll(field, "@S", "/");
+    field = replaceAll(field, "@A", "@");
+    return field;
+}
+function deserialize(raw){
+    var result = {};
+    var kvPairs = raw.split("/");
+    kvPairs.forEach(function(kvStr){
+        var kv = kvStr.split("@=");
+        if(kv.length != 2) {
+            return;
+        }
+        var key = unescape(kv[0]);
+        var value = unescape(kv[1]);
+        if(value.indexOf("@=") >= 0) {
+            value = deserialize(value);
+        }
+        result[key] = value;
+    });
+    return result;
+}
+
 
 Client.prototype.init = function () {
     let s = net.connect({
@@ -69,12 +103,8 @@ Client.prototype.formatData = function () {
         let msg_array = single_msg.toString().match(/(type@=(chatmsg|newblackres).*?)\x00/g)
         if (msg_array) {
             msg_array.forEach(msg => {
-                msg = msg.replace(/@=/g, '":"')
-                msg = msg.replace(/\//g, '","')
-                msg = msg.substring(0, msg.length - 3)
-                msg = `{"${msg}}`
-                let map =this.formatDanmu(msg)
-                filter(map);
+                let test = deserialize(msg);
+                filter(test);
             })
         }
     }
@@ -115,8 +145,7 @@ function filter(map) {
 }
 
 function chatmsg(data) {
-    if (data.nn == null || data.rid == null || data.uid == null) console.log(data);
-    else temp.push([data.rid, data.uid, data.nn, data.txt, new Date().getTime()]);
+    temp.push([data.rid, data.uid, data.nn, data.txt, new Date().getTime()]);
 }
 
 function blackmsg(data) {

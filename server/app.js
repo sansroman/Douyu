@@ -51,10 +51,4 @@ let fajie = new Client(67373);
 let daanchun = new Client(96291);
 
 
-dys.init();
-xiaoyuan.init();
-ssr.init();
-fajie.init();
-daanchun.init();
-
 module.exports = app;

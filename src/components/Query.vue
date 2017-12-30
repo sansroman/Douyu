@@ -10,7 +10,6 @@
         </el-input>
         </div>
     <el-table 
-      stripe
       border
       :data="danmuData" 
       v-show="isHiddle"
