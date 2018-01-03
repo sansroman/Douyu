@@ -31,7 +31,7 @@
 import axios from 'axios'
 
 export default {
-  name: "Login",
+  name: "Register",
   data() {
 
     let validatePass = (rule, value, callback) => {
