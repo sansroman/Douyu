@@ -7,6 +7,7 @@ let temp =[],
 function Client(roomid) {
     this.roomid = roomid;
     this.buf = Buffer.alloc(0)
+    this.count = 0;
     this.init();
 }
 
@@ -79,6 +80,8 @@ Client.prototype.init = function () {
         let msg = 'type@=keeplive/tick@=' + timestamp + '/';
         this.sendData(s, msg);
         InsertDb();
+        console.log(this.roomid+":"+this.count);
+        
     }, 45000);
 }
 Client.prototype.formatData = function () {
@@ -104,7 +107,7 @@ Client.prototype.formatData = function () {
         if (msg_array) {
             msg_array.forEach(msg => {
                 let test = deserialize(msg);
-                filter(test);
+                this.filter(test);
             })
         }
     }
@@ -139,16 +142,17 @@ Client.prototype.sendData = function (s, msg) {
 
 
 
-function filter(map) {
-    if (map.type == "chatmsg") chatmsg(map)
-    else if (map.type == "newblackres") blackmsg(map)
+Client.prototype.filter = function(map) {
+    if (map.type == "chatmsg") this.chatmsg(map)
+    else if (map.type == "newblackres") this.blackmsg(map)
 }
 
-function chatmsg(data) {
+Client.prototype.chatmsg=function(data) {
     temp.push([data.rid, data.uid, data.nn, data.txt, new Date().getTime()]);
+    this.count ++;
 }
 
-function blackmsg(data) {
+Client.prototype.blackmsg=function(data) {
     if (data.rid == 154537) blacker_temp.push([data.sid, data.did, data.snic, data.dnic, data.endtime]);
 }
 
