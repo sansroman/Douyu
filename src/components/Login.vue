@@ -95,6 +95,7 @@
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
   .login {
+    color:gray;
     width: 100%;
     height: 100%;
   }
@@ -113,5 +114,4 @@
     color: #000;
     font-weight: 500;
   }
-
 </style>

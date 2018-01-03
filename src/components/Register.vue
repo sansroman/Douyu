@@ -107,4 +107,7 @@ export default {
     .layout{
       margin-top: 20px;
     }
+    .login .el-form-item{
+      color: #fff;
+    }
 </style>

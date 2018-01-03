@@ -1,28 +1,29 @@
 <template>
-  <div class="login">
+  <div class="appear">
     <el-row :gutter="10" class="layout">
-      <el-col :xl="{span:8,offset:8}" :xs="{span:22,offset:1}" :sm="{span:22,offset:1}" :md="{span:22,offset:1}" :lg="{span:8,offset:8}">
+      <el-col :xl="{span:12,offset:6}" :xs="{span:22,offset:1}" :sm="{span:22,offset:1}" :md="{span:22,offset:1}" :lg="{span:12,offset:6}">
           <div class="login-form">
               <el-form label-width="100px" label-position="right" ref="ruleForm" :rules="rules" :model="ruleForm" status-icon>
                 <el-form-item label="斗鱼ID" prop="douyunn">
-                  <el-input type="text" v-model="ruleForm.reason" ></el-input>
+                  <el-input type="text" v-model="ruleForm.douyunn" ></el-input>
                 </el-form-item>               
                 <el-form-item label="申诉原因" prop="reason">
                   <el-input type="textarea" v-model="ruleForm.reason" autosize></el-input>
                 </el-form-item>
+                <el-form-item label="" prop="expvmImg">
+                    <el-upload
+                    class="upload"
+                    drag
+                    action="/file"
+                    multiple>
+                        <i class="el-icon-upload"></i>
+                        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                        <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
+                    </el-upload>
+                </el-form-item>
                 <el-form-item>
                   <el-button type="primary" @click="register('ruleForm')">提交</el-button>
                   <el-button @click="reset('ruleForm')">重置</el-button>
-                </el-form-item>
-                <el-form-item>
-                    <el-upload
-                    drag
-                    action="/file"
-                    multiple=>
-                    <i class="el-icon-upload"></i>
-                    <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-                    <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
-                    </el-upload>
                 </el-form-item>
               </el-form>
           </div>
@@ -76,13 +77,19 @@ export default {
     reset(formName) {
       this.$refs[formName].resetFields();
     }
+  },
+  mounted(){
+      this.ruleForm.douyunn = sessionStorage.getItem("username");
   }
 };
 </script scoped>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-    .layout{
-      margin-top: 20px;
-    }
+.el-upload{
+    width: 100%;
+}
+.el-upload-dragger{
+    width:100%;
+}
 </style>

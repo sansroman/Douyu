@@ -105,7 +105,6 @@ export default {
   mounted() {
     var Myechart = echarts.init(document.getElementById("echarts"));
     this.init("/api/mute", Myechart);
-    this.update("/api/mute", Myechart, 30 * 1000);
   }
 };
 </script>  
