@@ -1,7 +1,7 @@
 const net = require('net');
 let addDanmu = require('./Dao').addDanmu;
 let addBlacker = require('./Dao').addBlacker;
-
+let mute = require('./statistics').mute;
 let temp =[],
     blacker_temp=[];
 function Client(roomid) {
@@ -153,7 +153,10 @@ Client.prototype.chatmsg=function(data) {
 }
 
 Client.prototype.blackmsg=function(data) {
-    if (data.rid == 154537) blacker_temp.push([data.sid, data.did, data.snic, data.dnic, data.endtime]);
+    if (data.rid == 154537) {
+        blacker_temp.push([data.sid, data.did, data.snic, data.dnic, data.endtime]);
+        mute.incr();
+    }
 }
 
 function InsertDb() {

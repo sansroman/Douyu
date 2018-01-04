@@ -20,6 +20,24 @@
               </div>
               <div class="stats-footer">more info</div>
          </el-col>
+          <el-col :md="3" :xs="12" :sm="6" class="stats-container">
+              <div class="stats-heading">今日禁言</div>
+              <div class="stats-body-alt"> 
+                <div class="text-center">
+                  <span class="text-top"></span>{{statistics.mute}}
+                </div>
+              </div>
+              <div class="stats-footer">more info</div>
+         </el-col>
+          <el-col :md="3" :xs="12" :sm="6" class="stats-container">
+              <div class="stats-heading">今日申诉</div>
+              <div class="stats-body-alt"> 
+                <div class="text-center">
+                  <span class="text-top"></span>{{statistics.appear}}
+                </div>
+              </div>
+              <div class="stats-footer">more info</div>
+         </el-col>
        </el-row>
 
   </div>
@@ -55,7 +73,9 @@ export default {
     return {
       statistics:{
         views:0,
-        queryCount:0
+        queryCount:0,
+        appear:0,
+        mute:0
       }
     };
   },
