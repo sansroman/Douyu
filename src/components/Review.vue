@@ -55,28 +55,28 @@ export default {
         {
           identifer:1,
           douyunn:"南门头牛肉丸",
-          reason:"油了一下被封了30天",
+          reason:"起哄被封了30天",
           tag:0,
           process:"",
           date:"",
           query:[
             {
-            txt:"秃子你的头会反光",
-            date:14512235423
+            txt:"#上香",
+            date:"2017-01-01"
           }
           ]
 
         },{
           identifer:2,
-          douyunn:"南门牛肉",
-          reason:"油了一下被封了30天",
+          douyunn:"德云色丶克烈娃",
+          reason:"房管真的真实，直接给我了30天",
           tag:0,
           process:"",
           date:"",
           query:[
             {
-            txt:"秃子你的头会反光",
-            date:14512235423
+            txt:"房管来个禁言套餐",
+            date:"2017-12-31"
           }
           ]
 
