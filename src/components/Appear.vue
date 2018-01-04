@@ -2,7 +2,6 @@
   <div class="appear">
     <el-row :gutter="10" class="layout">
       <el-col :xl="{span:12,offset:6}" :xs="{span:22,offset:1}" :sm="{span:22,offset:1}" :md="{span:22,offset:1}" :lg="{span:12,offset:6}">
-          <div class="login-form">
               <el-form label-width="100px" label-position="right" ref="ruleForm" :rules="rules" :model="ruleForm" status-icon>
                 <el-form-item label="斗鱼ID" prop="douyunn">
                   <el-input type="text" v-model="ruleForm.douyunn" ></el-input>
@@ -26,14 +25,13 @@
                   <el-button @click="reset('ruleForm')">重置</el-button>
                 </el-form-item>
               </el-form>
-          </div>
       </el-col>
     </el-row>
 
   </div>
 </template>
 <script>
-import axios from 'axios'
+import axios from "axios";
 
 export default {
   name: "Appear",
@@ -41,55 +39,54 @@ export default {
     return {
       ruleForm: {
         reason: "",
-        douyunn:""
+        douyunn: ""
       },
-      rules:{
-          douyunn:[{required:true,message:'请输入斗鱼ID',trigger:'blur'}],
-          reason:[{required:true,message:'请输入申诉原因',trigger:'blur'}]
+      rules: {
+        douyunn: [{ required: true, message: "请输入斗鱼ID", trigger: "blur" }],
+        reason: [{ required: true, message: "请输入申诉原因", trigger: "blur" }]
       }
     };
   },
   methods: {
     register(formName) {
       let self = this;
-      this.$refs[formName].validate((vaild)=>{
+      this.$refs[formName].validate(vaild => {
         if (vaild) {
           axios
-        .post("/appear", {
-          douyunn:this.ruleForm.douyunn,
-          reason:this.ruleForm.reason
-        })
-        .then(function(response) {
-          self.$message({
-            type: "success",
-            message: "提交成功!"
-          });
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
-        }else{
+            .post("/appear", {
+              douyunn: this.ruleForm.douyunn,
+              reason: this.ruleForm.reason
+            })
+            .then(function(response) {
+              self.$message({
+                type: "success",
+                message: "提交成功!"
+              });
+            })
+            .catch(function(error) {
+              console.log(error);
+            });
+        } else {
           return false;
         }
-      })
-
+      });
     },
     reset(formName) {
       this.$refs[formName].resetFields();
     }
   },
-  mounted(){
-      this.ruleForm.douyunn = sessionStorage.getItem("username");
+  mounted() {
+    this.ruleForm.douyunn = sessionStorage.getItem("username");
   }
 };
 </script scoped>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.el-upload{
-    width: 100%;
+.el-upload {
+  width: 100%;
 }
-.el-upload-dragger{
-    width:100%;
+.el-upload-dragger {
+  width: 100%;
 }
 </style>
