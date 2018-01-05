@@ -9,7 +9,7 @@
                 <el-form-item label="申诉原因" prop="reason">
                   <el-input type="textarea" v-model="ruleForm.reason" autosize></el-input>
                 </el-form-item>
-                <el-form-item label="" prop="expvmImg">
+                <!-- <el-form-item label="" prop="expvmImg">
                     <el-upload
                     class="upload"
                     drag
@@ -19,7 +19,7 @@
                         <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
                         <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
                     </el-upload>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item>
                   <el-button type="primary" @click="register('ruleForm')">提交</el-button>
                   <el-button @click="reset('ruleForm')">重置</el-button>

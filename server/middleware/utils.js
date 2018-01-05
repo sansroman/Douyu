@@ -1,191 +1,278 @@
-const net = require('net');
-let addDanmu = require('./Dao').addDanmu;
-let addBlacker = require('./Dao').addBlacker;
-let mute = require('./statistics').mute;
-let temp =[],
-    blacker_temp=[];
-function Client(roomid) {
-    this.roomid = roomid;
-    this.buf = Buffer.alloc(0)
-    this.count = 0;
-    this.init();
-}
+const addDanmu = require('./Dao').addDanmu;
+const addBlacker = require('./Dao').addBlacker;
+const ws = require('ws')
+const events = require('events')
+const request = require('request-promise')
+const socks_agent = require('socks-proxy-agent')
+const REQUEST_TIMEOUT = 10000
+const REFRESH_GIFT_INFO_INTERVAL = 30 * 60 * 1000
 
-function replaceAll(str,search,replacement){
-		if(str == null || str.length <= 0) {
-			return "";
-		}
-	    return str.replace(new RegExp(search, 'g'), replacement);
-}
-function unescape(field){
-    if(!field || field.length <= 0) {
-        return "";
+class longzhu_danmu extends events {
+    constructor(roomid, proxy) {
+        super()
+        this._roomid = roomid
+        this.set_proxy(proxy)
     }
-    field = "" + field
-    field = replaceAll(field, "@S", "/");
-    field = replaceAll(field, "@A", "@");
-    return field;
-}
-function deserialize(raw){
-    var result = {};
-    var kvPairs = raw.split("/");
-    kvPairs.forEach(function(kvStr){
-        var kv = kvStr.split("@=");
-        if(kv.length != 2) {
-            return;
-        }
-        var key = unescape(kv[0]);
-        var value = unescape(kv[1]);
-        if(value.indexOf("@=") >= 0) {
-            value = deserialize(value);
-        }
-        result[key] = value;
-    });
-    return result;
-}
 
+    set_proxy(proxy) {
+        this._agent = null
+        if (proxy) {
+            let auth = ''
+            if (proxy.name && proxy.pass)
+                auth = `${proxy.name}:${proxy.pass}@`
+            let socks_url = `socks://${auth}${proxy.ip}:${proxy.port || 8080}`
+            this._agent = new socks_agent(socks_url)
+        }
+    }
 
-Client.prototype.init = function () {
-    let s = net.connect({
-        port: 8601,
-        host: 'openbarrage.douyutv.com'
-    }, () => {
-        console.log('connect success');
-    });
-    const msg = 'type@=loginreq/roomid@=' + this.roomid + '/';
-    this.sendData(s, msg);
-    s.on('data', (data) => {
-        if (this.buf.length === 0) {
-            this.buf = data
-        } else {
-            this.buf = Buffer.concat([this.buf, data])
+    async _get_gift_info() {
+        let opt = {
+            url: 'http://configapi.plu.cn/item/getallitems',
+            timeout: REQUEST_TIMEOUT,
+            json: true,
+            gzip: true,
+            agent: this._agent
         }
-        this.formatData();
-        const msg = 'type@=joingroup/rid@=' + this.roomid + '/gid@=-9999/';
-        this.sendData(s, msg);
-    });
-    s.on('error', (err) => {
-        console.log(err);
-        s.destroy();
-        let s = net.connect({
-            port: 8601,
-            host: 'openbarrage.douyutv.com'
-        }, () => {
-            console.log('connect success');
-        });
-        
-    });
-    setInterval(() => {
-        let timestamp = parseInt(new Date() / 1000);
-        let msg = 'type@=keeplive/tick@=' + timestamp + '/';
-        this.sendData(s, msg);
-        InsertDb();
-        console.log(this.roomid+":"+this.count);
-        
-    }, 45000);
-}
-Client.prototype.formatData = function () {
-    while (this.buf.length > 8) {
-        let len_0 = this.buf.readInt16LE(0)
-        let len_1 = this.buf.readInt16LE(4)
-        if (len_0 !== len_1) {
-            this.buf = Buffer.alloc(0)
-            return
-        }
-        let msg_len = len_0 + 4
-        if (this.buf.length < msg_len) {
-            return
-        }
-        let single_msg = this.buf.slice(0, msg_len)
-        let single_msg_tail = single_msg[single_msg.length - 1]
-        if (single_msg_tail !== 0) {
-            this.buf = Buffer.alloc(0)
-            return
-        }
-        this.buf = this.buf.slice(msg_len)
-        let msg_array = single_msg.toString().match(/(type@=(chatmsg|newblackres).*?)\x00/g)
-        if (msg_array) {
-            msg_array.forEach(msg => {
-                let test = deserialize(msg);
-                this.filter(test);
+        try {
+            let body = await request(opt)
+            if (!body) {
+                return null
+            }
+            let gift_info = {}
+            body.forEach(item => {
+                let type, price
+                switch (item.costType) {
+                    case 1:
+                        type = '龙币'
+                        price = item.costValue * 100
+                        break;
+                    case 2:
+                        type = '龙豆'
+                        price = item.costValue
+                    default:
+                        type = item.costType + ''
+                        price = item.costValue
+                        break;
+                }
+                gift_info[item.name] = {
+                    name: item.title,
+                    price: price,
+                    type: type
+                }
             })
+            return gift_info
+        } catch (e) {
+            return null
         }
     }
-}
-Client.prototype.formatDanmu = function (msg) {
-    let map = {};
-    msg = msg.replace(/\\/g, '')
-    msg = debackslashify(msg);
-    try {
-        map = JSON.parse(msg)        
-    } catch (error) {
-        console.log(error);
-        console.log(msg);
+
+    async _get_room_uid() {
+        let opt = {
+            url: `http://m.longzhu.com/${this._roomid}`,
+            timeout: REQUEST_TIMEOUT,
+            json: true,
+            gzip: true,
+            agent: this._agent
+        }
+        try {
+            let body = await request(opt)
+            if (!body) {
+                return null
+            }
+            let uid_array = body.match(/var roomId = (\d+);/)
+            if (!uid_array) return null
+            return uid_array[1]
+        } catch (e) {
+            return null
+        }
     }
 
-    return map;
 
-}
-
-Client.prototype.sendData = function (s, msg) {
-    let data = new Buffer(msg.length + 13);
-    data.writeInt32LE(msg.length + 9, 0);
-    data.writeInt32LE(msg.length + 9, 4);
-    data.writeInt32LE(689, 8);
-    data.write(msg + '\0', 12);
-    s.write(data);
-}
-
-
-
-
-
-
-
-Client.prototype.filter = function(map) {
-    if (map.type == "chatmsg") this.chatmsg(map)
-    else if (map.type == "newblackres") this.blackmsg(map)
-}
-
-Client.prototype.chatmsg=function(data) {
-    temp.push([data.rid, data.uid, data.nn, data.txt, new Date().getTime()]);
-    this.count ++;
-}
-
-Client.prototype.blackmsg=function(data) {
-    if (data.rid == 154537) {
-        blacker_temp.push([data.sid, data.did, data.snic, data.dnic, data.endtime]);
-        mute.incr();
+    async start() {
+        if (this._starting) return
+        this._starting = true
+        if (!this._uid) {
+            this._uid = await this._get_room_uid()
+            if (!this._uid) {
+                this.emit('error', new Error('Fail to get room id'))
+                return this.emit('close')
+            }
+        }
+        if (!this._gift_info) {
+            this._gift_info = await this._get_gift_info()
+            if (!this._gift_info) {
+                this.emit('error', new Error('Fail to get gift info'))
+                return this.emit('close')
+            }
+        }
+        this._refresh_gift_info_timer = setInterval(this._refresh_gift_info.bind(this), REFRESH_GIFT_INFO_INTERVAL);
+        this._start_ws_chat()
+        this._start_ws_other()
     }
-}
 
-function InsertDb() {
-    //插入数据库
-    for (let index in temp) {
-        addDanmu(temp[index]);
+    async _refresh_gift_info() {
+        let gift_info = await this._get_gift_info()
+        if (gift_info) {
+            this._gift_info = gift_info
+        } else {
+            this.emit('error', new Error('Fail to get gift info'))
+        }
     }
-    for (let index in blacker_temp) {
-        addBlacker(blacker_temp[index]);        
+
+    _start_ws_chat() {
+        this._client_chat = new ws(`ws://mbgows.plu.cn:8805/?room_id=${this._uid}&batch=1&group=0&connType=1`, {
+            perMessageDeflate: false,
+            agent: this._agent
+        })
+        this._client_chat.on('open', () => {
+            this.emit('connect')
+        })
+        this._client_chat.on('error', err => {
+            this.emit('error', err)
+        })
+        this._client_chat.on('close', () => {
+            this._stop()
+            this.emit('close')
+        })
+        this._client_chat.on('message', this._on_msg.bind(this))
     }
-    blacker_temp = [];
-    temp = [];
+
+    _start_ws_other() {
+        this._client_other = new ws(`ws://mbgows.plu.cn:8805/?room_id=${this._uid}&batch=1&group=0&connType=2`, {
+            perMessageDeflate: false,
+            agent: this._agent
+        })
+        this._client_other.on('open', () => {
+            this.emit('connect')
+        })
+        this._client_other.on('error', err => {
+            this.emit('error', err)
+        })
+        this._client_other.on('close', () => {
+            this._stop()
+            this.emit('close')
+        })
+        this._client_other.on('message', this._on_msg.bind(this))
+    }
+
+    _on_msg(msg) {
+        try {
+            msg = JSON.parse(msg)
+            if (msg instanceof Array) {
+                msg.forEach((m) => {
+                    this._format_msg(m)
+                })
+            } else {
+                this._format_msg(msg)
+            }
+        } catch (e) {
+            this.emit('error', e)
+        }
+    }
+
+    _format_msg(msg) {
+        let msg_obj, time
+        try {
+            let time_array = msg.msg.time.match(/Date\((\d+)/)
+            time = parseInt(time_array[1])
+        } catch (e) {
+            time = new Date().getTime()
+        }
+        switch (msg.type) {
+            case 'chat':
+                let plat = 'pc_web'
+                if (msg.msg.via === 2) {
+                    plat = 'android'
+                } else if (msg.msg.via === 3) {
+                    plat = 'ios'
+                }
+                msg_obj = {
+                    type: 'chat',
+                    time: time,
+                    from: {
+                        name: msg.msg.user.username,
+                        rid: msg.msg.user.uid + '',
+                        level: msg.msg.user.newGrade,
+                        plat: plat
+                    },
+                    content: msg.msg.content,
+                    id: msg.id + '',
+                    raw: msg
+                }
+                break;
+            case 'gift':
+                let gift = this._gift_info[msg.msg.itemType] || {}
+                let gift_name = gift.name || '未知礼物'
+                let gift_price = gift.price || 0
+                let gift_type = gift.type || '未知类型'
+                msg_obj = {
+                    type: 'gift',
+                    time: time,
+                    name: gift_name,
+                    from: {
+                        name: msg.msg.user.username,
+                        rid: msg.msg.user.uid,
+                        level: msg.msg.user.newGrade,
+                    },
+                    count: msg.msg.number,
+                    price: msg.msg.number * gift_price,
+                    earn: msg.msg.number * gift_price * 0.01,
+                    gift_type: gift_type,
+                    id: msg.id + '',
+                    raw: msg
+                }
+                break
+            default:
+                msg_obj = {
+                    type: 'other',
+                    time: time,
+                    id: msg.id + '',
+                    raw: msg
+                }
+                break;
+        }
+        this.emit('message', msg_obj)
+    }
+
+    _stop() {
+        if (this._starting) {
+            this._starting = false
+            clearInterval(this._refresh_gift_info_timer)
+            this._client_chat && this._client_chat.terminate()
+            this._client_other && this._client_other.terminate()
+        }
+    }
+
+    stop() {
+        this.removeAllListeners()
+        this._stop()
+    }
+
 }
 
-var escapes = { // Escapement translation table  
-    '\\' : '\\',  
-    '"' : '"',  
-    '/' : '/',  
-    't' : '\t',  
-    'n' : '\n',  
-    'r' : '\r',  
-    'f' : '\f',  
-    'b' : '\b'  
-};  
-function debackslashify(text) {  
-    // Remove and replace any backslash escapement.  
-    return text.replace(/\\(?:u(.{4})|([^u]))/g, function(a, b, c) {  
-                return b ? String.fromCharCode(parseInt(b, 16)) : escapes[c];  
-            });  
+
+
+const roomid = 'xuxubaobao'
+const client = new longzhu_danmu(roomid)
+
+function ListenRoom(roomarr) {
+    this.clients = [];
+    this.roomarr =roomarr;
+    this,temp = [];
+}
+ListenRoom.prototype.start= function(){
+    this.roomarr.forEach((element,index)=>{
+        console.log(element);
+        console.log(index)
+        this.clients[index] = new longzhu_danmu(element);
+        this.clients[index].on('message',msg=>{if(msg.type==="chat")this.save(msg)});
+        this.clients[index].on('error',e=>{console.log('error',e);this.clients[index].start()});
+        this.clients[index].start();                
+    })
+    
+}
+ListenRoom.prototype.save = function(msg){
+    addDanmu([msg.raw.msg.RoomId,msg.from.rid,msg.from.name,msg.content,msg.time]);
 }
 
-module.exports = Client;
+module.exports = ListenRoom;

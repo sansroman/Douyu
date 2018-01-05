@@ -31,7 +31,7 @@
                     </el-menu-item>
                     <el-menu-item v-show="isAdmin" index="/index/review">
                         <i class="el-icon-menu"></i>                    
-                        <span slot="title">审核申述</span>
+                        <span slot="title">审核申诉</span>
                     </el-menu-item>
                     <div class="userInfo">
                         <p class="role">{{job}}:</p>
@@ -63,12 +63,12 @@ export default {
   },
   computed:{
       isSuper(){
-        //   return this.roles.manager&&this.roles.manager>2
-        return true
+          return this.roles.manager&&this.roles.manager>2
+        // return true
       },
       isAdmin(){
-        //   return this.roles.query&&this.roles.query>2;
-        return true
+          return this.roles.query&&this.roles.query>2;
+        // return true
       },
       job(){
           if(this.isSuper) return "管理员"

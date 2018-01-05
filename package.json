@@ -16,8 +16,12 @@
     "element-ui": "^2.0.7",
     "moment": "^2.20.1",
     "node_ranaly": "^0.1.1",
+    "request": "^2.83.0",
+    "request-promise": "^4.2.2",
+    "socks-proxy-agent": "^3.0.1",
     "vue": "^2.5.2",
-    "vue-router": "^3.0.1"
+    "vue-router": "^3.0.1",
+    "ws": "^4.0.0"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

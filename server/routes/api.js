@@ -4,6 +4,7 @@ var now = require('moment')();
 var query = require('../middleware/statistics').query;
 var users = require('../middleware/statistics').users;
 var appear = require('../middleware/statistics').appear;
+var mute = require('../middleware/statistics').mute;
 
 var authentication = require('../authentication');
 let getAllUser = require('../middleware/Dao').getAllUser;
@@ -28,7 +29,7 @@ router.get('/statistics',(req,res,next)=>{
         temp.views = results[0]||0;
         mute.get([now.format('YYYYMMDD')], function (err, results) {
           temp.mute = results[0]||0;
-          appera.get([now.format('YYYYMMDD')], function (err, results) {
+          appear.get([now.format('YYYYMMDD')], function (err, results) {
             temp.appear = results[0]||0;
             res.json(temp);
           }) 

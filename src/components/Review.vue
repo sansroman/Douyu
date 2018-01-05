@@ -155,6 +155,27 @@ export default {
         if (value === 0) return 'info'
         else if(value === 1) return 'success'
         else return 'danger'
+    },
+    pass(value){
+      console.log(value)
+      value.tag = 1;
+      value.process = "德云色丶甜甜圈";
+      value.date =  "2017-01-04";      
+      this.$notify({
+        title: "成功",
+        type: "success",
+        message: "审核成功!"
+      });
+    },
+    reject(value){
+      value.tag = 2;
+      value.process = "德云色丶甜甜圈";
+      value.date =  "2017-01-04";
+      this.$notify({
+        title: "成功",
+        type: "success",
+        message: "审核成功!"
+      });
     }
   },
   computed:{
