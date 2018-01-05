@@ -31,7 +31,7 @@
 import axios from 'axios'
 
 export default {
-  name: "Login",
+  name: "Register",
   data() {
 
     let validatePass = (rule, value, callback) => {
@@ -106,5 +106,8 @@ export default {
 <style scoped>
     .layout{
       margin-top: 20px;
+    }
+    .login .el-form-item{
+      color: #fff;
     }
 </style>

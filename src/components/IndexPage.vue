@@ -25,7 +25,14 @@
                         <i class="el-icon-menu"></i>                    
                         <span slot="title">禁言查询</span>
                     </el-menu-item>
-
+                    <el-menu-item v-show="!isAdmin" index="/index/appear">
+                        <i class="el-icon-menu"></i>                    
+                        <span slot="title">用户申诉</span>
+                    </el-menu-item>
+                    <el-menu-item v-show="isAdmin" index="/index/review">
+                        <i class="el-icon-menu"></i>                    
+                        <span slot="title">审核申诉</span>
+                    </el-menu-item>
                     <div class="userInfo">
                         <p class="role">{{job}}:</p>
                         <p class="username">{{username}}</p>
@@ -35,7 +42,6 @@
           </el-aside>
           <el-main>
               <router-view></router-view>
-              <h3 v-show="!isAdmin">功能等待开发</h3>
           </el-main>
       </el-container>
   </div>

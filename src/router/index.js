@@ -8,6 +8,8 @@ import Query from "@/components/Query";
 import Manager from "@/components/Manager";
 import Register from "@/components/Register";
 import Mute from "@/components/Mute";
+import Appear from "@/components/Appear"
+import Review from "@/components/Review"
 Vue.use(Router)
 
 let router = new Router({
@@ -53,6 +55,13 @@ let router = new Router({
         {
           path:'mute',
           component:Mute
+        },
+        {
+          path:'appear',
+          component:Appear
+        },{
+          path:'review',
+          component:Review
         }
       ]
     }

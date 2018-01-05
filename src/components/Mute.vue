@@ -71,7 +71,6 @@ export default {
         .then(response => {
           this.option.xAxis[0].data = response.data.nnList;
           this.option.series[0].data = response.data.countList;
-          console.log(this.option);
           targetEl.setOption(this.option);
         })
         .catch(err => {
@@ -105,7 +104,6 @@ export default {
   mounted() {
     var Myechart = echarts.init(document.getElementById("echarts"));
     this.init("/api/mute", Myechart);
-    this.update("/api/mute", Myechart, 30 * 1000);
   }
 };
 </script>  

@@ -3,6 +3,9 @@ var router = express.Router();
 var now = require('moment')();
 var query = require('../middleware/statistics').query;
 var users = require('../middleware/statistics').users;
+var appear = require('../middleware/statistics').appear;
+var mute = require('../middleware/statistics').mute;
+
 var authentication = require('../authentication');
 let getAllUser = require('../middleware/Dao').getAllUser;
 let delUserByUsername = require('../middleware/Dao').delUserByUsername;
@@ -20,14 +23,18 @@ router.get('/statistics',(req,res,next)=>{
 },authentication.role,(req,res)=>{
 
     query.get([now.format('YYYYMMDD')], function (err, results) {
-      let queryCount = results[0];
+      let temp = {};
+      temp.queryCount = results[0]||0;
       users.get([now.format('YYYYMMDD')], function (err, results) {
-        console.log(results)
-        let temp ={
-          queryCount:queryCount||0,
-          views:results[0]||0
-        }
-        res.json(temp);
+        temp.views = results[0]||0;
+        mute.get([now.format('YYYYMMDD')], function (err, results) {
+          temp.mute = results[0]||0;
+          appear.get([now.format('YYYYMMDD')], function (err, results) {
+            temp.appear = results[0]||0;
+            res.json(temp);
+          }) 
+        }) 
+
       }) 
     });
   
@@ -35,7 +42,13 @@ router.get('/statistics',(req,res,next)=>{
 
 
 })
+router.post('/appear',(req,res,next)=>{
+    appear.incr();
+},(req,res)=>{
+   let douyunn = req.body.douyunn||"";
+   let reason = req.body.reason||"";
 
+})
 
 router.get('/danmu', (req, res, next) => {
   query.incr();
@@ -134,14 +147,6 @@ router.put('/user', (req, res, next) => {
       }
     })
 })
-
-
-
-
-
-
-
-
 router.get('/mute', (req, res, next) => {
   req.roles = {
     query: 3

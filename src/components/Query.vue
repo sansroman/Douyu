@@ -10,14 +10,17 @@
         </el-input>
         </div>
     <el-table 
-      stripe
       border
       :data="danmuData" 
       v-show="isHiddle"
+      :row-class-name="tableRowClassName"
       >
       <el-table-column :fixed="this.$root.$data.isMoblie" prop="nn" label="斗鱼ID" width="100">
       </el-table-column>
       <el-table-column prop="rid" label="房间号" width="80">
+          <template slot-scope="scope">
+              <p>{{convertRoom(scope.row.rid)}}</p>
+          </template>
       </el-table-column>
       <el-table-column prop="uid" label="斗鱼UID" width="100">
       </el-table-column>
@@ -72,6 +75,15 @@ export default {
     };
   },
   methods: {
+    tableRowClassName({row, rowIndex}) {
+        if (row.rid === 2241164)  return 'warning-row';
+        else return '';
+    },
+    convertRoom(rid){
+        if(rid === 2241164) return '德云色';
+        else if(rid === 19569) return '旭旭宝宝';
+        else return '未知房间';
+    },
     query() {
       this.handleCurrentChange(1);
     },
@@ -92,8 +104,7 @@ export default {
         });
     },
     handleCurrentChange(cur) {
-      cur = cur - 1;
-      if(first==true) return;      
+      cur = cur - 1;    
       if(this.select==1)cur = cur+"&fuzzy=true";
       let self = this;
       axios
@@ -147,5 +158,12 @@ export default {
   margin-left: 0%;
   margin-top: 0%;
 }
+  .el-table .warning-row {
+    background: oldlace;
+  }
+
+  .el-table .success-row {
+    background: #f0f9eb;
+  }
 
 </style>

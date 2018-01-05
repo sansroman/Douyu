@@ -49,7 +49,7 @@ let authentication = {
         findOneByUser(username)
         .then((result)=>{
             if(!result){
-                res.status(403).send('未找到该用户');
+                res.status(fr).send('未找到该用户');
             }else{
                 bcrypt.compare(password,result.password,(err,success)=>{
                         if(success){
