@@ -258,26 +258,19 @@ const client = new longzhu_danmu(roomid)
 function ListenRoom(roomarr) {
     this.clients = [];
     this.roomarr =roomarr;
-    this.temp = [];
+    this,temp = [];
 }
 ListenRoom.prototype.start= function(){
     this.roomarr.forEach((element,index)=>{
         this.clients[index] = new longzhu_danmu(element);
         this.clients[index].on('message',msg=>{if(msg.type==="chat")this.save(msg)});
         this.clients[index].on('error',e=>{console.log('error',e);this.clients[index].start()});
-        this.clients[index].start();     
-        setInterval(() => {         
-	 for(let index in this.temp){
-		addDanmu(this.temp[index])
-		console.log(this.temp[index]);
-         }
-         this.temp = [];
-        }, 45000);           
+        this.clients[index].start();                
     })
     
 }
 ListenRoom.prototype.save = function(msg){
-    this.temp.push([msg.raw.msg.RoomId,msg.from.rid,msg.from.name,msg.content,msg.time])
+    addDanmu([msg.raw.msg.RoomId,msg.from.rid,msg.from.name,msg.content,msg.time]);
 }
 
 module.exports = ListenRoom;
