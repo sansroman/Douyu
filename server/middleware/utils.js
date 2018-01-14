@@ -267,11 +267,10 @@ ListenRoom.prototype.start= function(){
         this.clients[index].on('error',e=>{console.log('error',e);this.clients[index].start()});
         this.clients[index].start();     
         setInterval(() => {         
-	 for(let index in this.temp){
-		addDanmu(this.temp[index])
-		console.log(this.temp[index]);
-         }
-         this.temp = [];
+            for(let index in this.temp){
+                addDanmu(this.temp[index])
+            }
+            this.temp = [];
         }, 45000);           
     })
     
