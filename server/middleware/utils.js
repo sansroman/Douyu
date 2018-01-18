@@ -6,6 +6,7 @@ const request = require('request-promise')
 const socks_agent = require('socks-proxy-agent')
 const REQUEST_TIMEOUT = 10000
 const REFRESH_GIFT_INFO_INTERVAL = 30 * 60 * 1000
+let index_text = 0;
 
 class longzhu_danmu extends events {
     constructor(roomid, proxy) {
@@ -252,8 +253,7 @@ class longzhu_danmu extends events {
 
 
 
-const roomid = 'xuxubaobao'
-const client = new longzhu_danmu(roomid)
+
 
 function ListenRoom(roomarr) {
     this.clients = [];
@@ -266,13 +266,15 @@ ListenRoom.prototype.start= function(){
         this.clients[index].on('message',msg=>{if(msg.type==="chat")this.save(msg)});
         this.clients[index].on('error',e=>{console.log('error',e);this.clients[index].start()});
         this.clients[index].start();     
-        setInterval(() => {         
-            for(let index in this.temp){
-                addDanmu(this.temp[index])
-            }
-            this.temp = [];
-        }, 45000);           
     })
+    setInterval(() => {         
+        for(let index in this.temp){
+            addDanmu(this.temp[index])
+            index_text++;
+        }
+        console.log(index_text);
+        this.temp = [];
+    }, 45000);    
     
 }
 ListenRoom.prototype.save = function(msg){

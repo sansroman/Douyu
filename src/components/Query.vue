@@ -1,7 +1,7 @@
 <template>
   <div id="query">
         <div :class="{data:hasData||this.$root.$data.isMoblie}" class="search">
-        <el-input placeholder="请输入斗鱼ID" v-model="querytext" class="input-with-select">
+        <el-input placeholder="请输入龙珠昵称" v-model="querytext" class="input-with-select">
             <el-select v-model="select" slot="prepend" placeholder="请选择">
               <el-option label="精确搜索" value="0"></el-option>
               <el-option label="模糊搜索" value="1"></el-option>
@@ -22,7 +22,7 @@
               <p>{{convertRoom(scope.row.rid)}}</p>
           </template>
       </el-table-column>
-      <el-table-column prop="uid" label="斗鱼UID" width="100">
+      <el-table-column prop="uid" label="龙珠UID" width="100">
       </el-table-column>
       <el-table-column prop="txt" label="发言" width="300">
       </el-table-column>
@@ -40,7 +40,7 @@
               width="150"
               trigger="click">
               <el-table :data="gridData">
-                <el-table-column width="150" property="nn" label="斗鱼ID"></el-table-column>
+                <el-table-column width="150" property="nn" label="龙珠ID"></el-table-column>
               </el-table>
             </el-popover>
             <el-button @click="find(scope.row)" v-popover:uidList type="primary" size="small">查看</el-button>
