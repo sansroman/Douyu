@@ -7,7 +7,7 @@ const sql = {
   getAllUser: 'SELECT username,douyunn,uid,role FROM user ORDER BY role LIMIT ?,? ',
   delUserByUsername: 'DELETE  FROM user WHERE username = ?',
   modifyUser: 'UPDATE user  set role = ? WHERE username = ?',
-  queryDanmuByUser: 'SELECT rid,uid,nn,txt,time FROM danmu WHERE nn = ? LIMIT ?,?',
+  queryDanmuByUser: 'SELECT rid,uid,nn,txt,time FROM danmu WHERE nn = ? ORDER BY time LIMIT ?,?',
   queryDanmuByUserFuzzy: 'SELECT rid,uid,nn,txt,time FROM danmu WHERE nn LIKE ? LIMIT ?,?',  
   queryDanmuByUid: 'SELECT nn FROM danmu WHERE uid = ? GROUP BY nn',
   getUserCount: 'SELECT count(*) AS count FROM user ',
