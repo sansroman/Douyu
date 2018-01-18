@@ -22,7 +22,7 @@
               <p>{{convertRoom(scope.row.rid)}}</p>
           </template>
       </el-table-column>
-      <el-table-column prop="uid" label="龙珠UID" width="100">
+      <el-table-column prop="uid" label="龙珠UID" width="120">
       </el-table-column>
       <el-table-column prop="txt" label="发言" width="300">
       </el-table-column>
