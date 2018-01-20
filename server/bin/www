@@ -22,16 +22,14 @@ app.set('port', port);
  */
 
 
-http.createServer(function (req, res) {
-    res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
-    res.end();
-}).listen(80);
+var httpServer = http.createServer(app);
 
 var httpsServer = https.createServer(certOpts, app);
 /**
  * Listen on provided port, on all interfaces.
  */
 
+httpServer.listen(80);
 httpsServer.listen(port);
 httpsServer.on('error', onError);
 httpsServer.on('listening', onListening);
