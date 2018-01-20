@@ -8,7 +8,19 @@ var app = require('../app');
 var debug = require('debug')('server:server');
 var http = require('http');
 var https = require('https');
+var express = require('express');
+var tempApp = express();
 var certOpts = require('../conf').certOpts;
+
+
+
+tempApp.use(function(req,res,next) {
+  if (!/https/.test(req.protocol)){
+     res.redirect("https://" + req.headers.host + req.url);
+  } else {
+     return next();
+  } 
+});
 
 /**
  * Get port from environment and store in Express.
@@ -22,7 +34,7 @@ app.set('port', port);
  */
 
 
-var httpServer = http.createServer(app);
+var httpServer = http.createServer(tempApp);
 
 var httpsServer = https.createServer(certOpts, app);
 /**
