@@ -59,9 +59,9 @@ router.get('/danmu', (req, res, next) => {
 }, authentication.role, (req, res) => {
   let fuzzy = req.query.fuzzy||false;
   let douyunn = req.query.douyunn || "";
+  let cur = req.query.cur * 20 || 0;      
   douyunn = fuzzy?"%"+douyunn+"%":douyunn;
   if (douyunn) {
-    let cur = req.query.cur * 20 || 0;
     queryDanmuByUser(douyunn, cur,fuzzy).then((results) => {
         if (results.total == 0) res.status(404).send("未找到记录");
         else res.status(200).send(results);
@@ -71,7 +71,7 @@ router.get('/danmu', (req, res, next) => {
       })
   } else {
     let uid = req.query.uid || "";
-    queryDanmuByUid(uid).then((results) => {
+    queryDanmuByUid(uid,cur).then((results) => {
         if (results.total == 0) res.status(404).send("未找到记录");
         else res.status(200).send(results);
       })

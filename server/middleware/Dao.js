@@ -9,9 +9,10 @@ const sql = {
   modifyUser: 'UPDATE user  set role = ? WHERE username = ?',
   queryDanmuByUser: 'SELECT rid,uid,nn,txt,time FROM danmu WHERE nn = ? ORDER BY time LIMIT ?,?',
   queryDanmuByUserFuzzy: 'SELECT rid,uid,nn,txt,time FROM danmu WHERE nn LIKE ? LIMIT ?,?',  
-  queryDanmuByUid: 'SELECT nn FROM danmu WHERE uid = ? GROUP BY nn',
+  queryDanmuByUid: 'SELECT rid,uid,nn,txt,time FROM danmu WHERE uid = ? GROUP BY nn',
   getUserCount: 'SELECT count(*) AS count FROM user ',
   getDanmuCount: 'SELECT count(*) AS count FROM  danmu WHERE nn = ?',
+  getDanmuCountByUid: 'SELECT count(*) AS count FROM  danmu WHERE uid = ?',
   getDanmuCountFuzzy: 'SELECT count(*) AS count FROM  danmu WHERE nn LIKE ?',  
   addDanmu: 'INSERT INTO danmu(rid,uid,nn,txt,time) VALUES (?,?,?,?,?)',
   addBlacker: 'INSERT INTO blacker(sid,did,snic,dnic,endtime) VALUES(?,?,?,?,?)',
@@ -87,17 +88,29 @@ let exec = {
       });
     });
   },
-  queryDanmuByUid(uid) {
+  queryDanmuByUid(uid,cur) {
     return new Promise((resolve, reject) => {
       pool.getConnection((err, connection) => {
         connection.query({
-          sql: sql.queryDanmuByUid,
+          sql: sql.getDanmuCountByUid,
           timeout: 2000,
           values: [uid]
-        }, (error, results, fields) => {
-          if (error) reject(error);
-          resolve(results);
-          connection.release();
+        }, (error, count, fields) => {
+            if (error) reject(error);
+            let result ={};
+            result.total = count?count[0].count:0;
+            pool.getConnection((err, connection) => {
+              connection.query({
+                sql: sql.queryDanmuByUid,
+                timeout: 3000,
+                values: [uid, cur, 20]
+              }, (error, results, fields) => {
+                result.result = results;
+                resolve(result);
+                connection.release();
+              });
+            });
+            connection.release();  
         });
 
       });
