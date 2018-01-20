@@ -24,7 +24,7 @@ app.set('port', port);
  */
 
 
-httpServer = http.createServer(app).listen(80);
+http.createServer(app).listen(80);
 
 var httpsServer = https.createServer(certOpts, app);
 /**

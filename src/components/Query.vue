@@ -5,6 +5,7 @@
             <el-select v-model="select" slot="prepend" placeholder="请选择">
               <el-option label="精确搜索" value="0"></el-option>
               <el-option label="模糊搜索" value="1"></el-option>
+              <el-option label="UID搜索" value="2"></el-option>              
             </el-select>
             <el-button slot="append" icon="el-icon-search" @click="query"></el-button>
         </el-input>
@@ -88,27 +89,30 @@ export default {
       this.handleCurrentChange(1);
     },
     find(data) {
-      let self = this;
-      axios
-        .get("/api/danmu?uid=" + data.uid)
-        .then(function(response) {
-          self.$message({
-            type: "success",
-            message: "读取成功!"
-          });
-          self.gridData = response.data;
-        })
-        .catch(function(error) {
-          self.gridData = [];
-          self.$message.error(error.response.data);
-        });
+      //暂时没用
+      // let self = this;
+      // axios
+      //   .get("/api/danmu?uid=" + data.uid)
+      //   .then(function(response) {
+      //     self.$message({
+      //       type: "success",
+      //       message: "读取成功!"
+      //     });
+      //     self.gridData = response.data;
+      //   })
+      //   .catch(function(error) {
+      //     self.gridData = [];
+      //     self.$message.error(error.response.data);
+      //   });
     },
     handleCurrentChange(cur) {
-      cur = cur - 1;    
-      if(this.select==1)cur = cur+"&fuzzy=true";
       let self = this;
+      let queryStr= "/api/danmu?douyunn=" + self.querytext + "&cur=" +cur;
+      cur = cur - 1;    
+      if(this.select==1) queryStr = "/api/danmu?douyunn=" + self.querytext + "&cur=" +cur+"&fuzzy=true";
+      else if(this.select==2) queryStr = "/api/danmu?uid=" + self.querytext+ "&cur=" +cur;
       axios
-        .get("/api/danmu?douyunn=" + self.querytext + "&cur=" + cur)
+        .get(queryStr)
         .then(function(response) {
           self.$message({
             type: "success",
