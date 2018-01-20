@@ -14,20 +14,21 @@ var certOpts = require('../conf').certOpts;
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3003');
+var port = normalizePort(process.env.PORT || '8443');
 app.set('port', port);
 
 /**
  * Create HTTP server.
  */
 
-var server = http.createServer(app);
-https.createServer(certOpts, app).listen(443);
+// var server = http.createServer(app);
+var server = https.createServer(certOpts, app);
 /**
- * Listen on provided port, on all network interfaces.
+ * Listen on provided port, on all netwoError: ENOENT: no such file or directory, open '/home/ubuntu/work/Douyu/server/sslcert/fullchain.pem'rk interfaces.
  */
 
-server.listen(port);
+ server.listen(port);
+// server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
 
