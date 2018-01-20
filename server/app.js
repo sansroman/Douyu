@@ -23,8 +23,18 @@ app.use(session({ secret: 'dysniubi', cookie: { maxAge: 60*1000*60 },resave:true
 app.use(express.static(path.join(__dirname, '../dist')));
 
 
+app.use(function(req,res,next) {
+  if (!/https/.test(req.protocol)){
+     res.redirect("https://" + req.headers.host + req.url);
+  } else {
+     return next();
+  } 
+});
 app.use('/api',api);
 app.use('/', index);
+
+
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
