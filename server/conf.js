@@ -1,3 +1,4 @@
+let fs = require('fs');
 module.exports = {
   db: {
     mysql: {
@@ -7,5 +8,9 @@ module.exports = {
       password: '123456',
       database: 'dys'
     }
+  },
+  certOpts:{
+    cert: fs.readFileSync('./sslcert/fullchain.pem'),
+    key: fs.readFileSync('./sslcert/privkey.pem')
   }
 }
