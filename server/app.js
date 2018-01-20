@@ -10,12 +10,15 @@ var api = require('./routes/api');
 var app = express();
 var ListenRoom = require('./middleware/utils');
 
+
+
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.set('view engine', 'jade');
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.static('static'));
 app.use(cookieParser());
 app.use(session({ secret: 'dysniubi', cookie: { maxAge: 60*1000*60 },resave:true,saveUninitialized:true}))
 app.use(express.static(path.join(__dirname, '../dist')));
