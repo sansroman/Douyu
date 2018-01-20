@@ -9,7 +9,7 @@ const sql = {
   modifyUser: 'UPDATE user  set role = ? WHERE username = ?',
   queryDanmuByUser: 'SELECT rid,uid,nn,txt,time FROM danmu WHERE nn = ? ORDER BY time LIMIT ?,?',
   queryDanmuByUserFuzzy: 'SELECT rid,uid,nn,txt,time FROM danmu WHERE nn LIKE ? LIMIT ?,?',  
-  queryDanmuByUid: 'SELECT rid,uid,nn,txt,time FROM danmu WHERE uid = ? GROUP BY nn',
+  queryDanmuByUid: 'SELECT rid,uid,nn,txt,time FROM danmu WHERE uid = ? ORDER BY time LIMIT ?,?',
   getUserCount: 'SELECT count(*) AS count FROM user ',
   getDanmuCount: 'SELECT count(*) AS count FROM  danmu WHERE nn = ?',
   getDanmuCountByUid: 'SELECT count(*) AS count FROM  danmu WHERE uid = ?',
