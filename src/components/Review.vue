@@ -14,9 +14,15 @@
               </el-table-column>
               <el-table-column :fixed="this.$root.$data.isMoblie" prop="identifer" label="申诉编号" width="100">
               </el-table-column>
-              <el-table-column prop="douyunn" label="申诉人" width="200">
+              <el-table-column prop="douyunn" label="申诉人" width="180">
               </el-table-column>
               <el-table-column prop="reason" label="申诉原因" >
+              </el-table-column>
+              <el-table-column prop="process" label="处理人" width="180">
+              </el-table-column>
+              <el-table-column prop="date" label="处理时间" width="120">
+              </el-table-column>
+              <el-table-column prop="remark" label="备注" width="300">
               </el-table-column>
               <el-table-column 
               prop="tag" 
@@ -30,11 +36,6 @@
                       close-transition>{{filterList[scope.row.tag]}}</el-tag>
                   </template>
               </el-table-column>
-              <el-table-column prop="process" label="处理人" width="200">
-              </el-table-column>
-              <el-table-column prop="date" label="处理时间" width="120">
-              </el-table-column>
-
               <el-table-column label="操作" width="200">
                 <template slot-scope="scope">
                     <el-button @click="pass(scope.row)"  type="primary" size="small" :disabled="scope.row.tag!==0">通过</el-button>
@@ -59,6 +60,7 @@ export default {
           tag:0,
           process:"",
           date:"",
+          remark:"",
           query:[
             {
             txt:"#上香",
@@ -73,6 +75,7 @@ export default {
           tag:0,
           process:"",
           date:"",
+          remark:"",
           query:[
             {
             txt:"房管来个禁言套餐",
@@ -87,6 +90,7 @@ export default {
           tag:0,
           process:"",
           date:"",
+          remark:"",
           query:[
             {
             txt:"秃子你的头会反光",
@@ -98,9 +102,8 @@ export default {
           identifer:4,
           douyunn:"南门头牛肉丸",
           reason:"油了一下被封了30天",
-          tag:1,
-          process:"德云色丶甜甜圈",
-          date:"2017-01-11",
+          tag:0,
+          remark:"",
           query:[
             {
             txt:"秃子你的头会反光",
@@ -120,9 +123,8 @@ export default {
           identifer:4,
           douyunn:"开哥无敌",
           reason:"给你爸解封",
-          tag:2,
-          process:"德云色丶甜甜圈",
-          date:"2017-01-11",
+          tag:0,
+          remark:"",
           query:[
             {
             txt:"NMSL",
@@ -156,25 +158,45 @@ export default {
         else if(value === 1) return 'success'
         else return 'danger'
     },
-    pass(value){
-      console.log(value)
-      value.tag = 1;
-      value.process = "德云色丶甜甜圈";
-      value.date =  "2017-01-04";      
-      this.$notify({
-        title: "成功",
-        type: "success",
-        message: "审核成功!"
+    pass(row){
+       this.$prompt('请输入备注', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消'
+        }).then(({ value }) => {
+          row.tag = 1;
+          row.process = "德云色丶甜甜圈";
+          row.date =  new Date().toLocaleDateString(); 
+          row.remark = value;
+          this.$message({
+            type: 'success',
+            message: '审核通过'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '取消'
+          });       
       });
+       
     },
-    reject(value){
-      value.tag = 2;
-      value.process = "德云色丶甜甜圈";
-      value.date =  "2017-01-04";
-      this.$notify({
-        title: "成功",
-        type: "success",
-        message: "审核成功!"
+    reject(row){
+       this.$prompt('请输入备注', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消'
+        }).then(({ value }) => {
+          row.tag = 2;
+          row.process = "德云色丶甜甜圈";
+          row.date =  new Date().toLocaleDateString(); 
+          row.remark = value;
+          this.$message({
+            type: 'success',
+            message: '已拒绝'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '取消'
+          });       
       });
     }
   },
