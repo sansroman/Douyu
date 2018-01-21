@@ -1,13 +1,13 @@
 <template>
-  <div class="login"
-    <el-row  class="layout">
-      <el-col :xl="{span:6,offset:9}" :xs="24" :sm="24" :md="24" :lg="{span:6,offset:9}">
+  <div class="login">
+    <el-row class="layout">
+      <el-col  class="loginBox" :xl="{span:6,offset:9}" :xs="24" :sm="24" :md="24" :lg="{span:6,offset:9}">
         <div class="login-form">
           <el-form label-width="60px" label-position="right" ref="ruleForm" :rules="rules" :model="ruleForm" status-icon>
-            <el-form-item label="账户" prop="username">
+            <el-form-item class="loginText"  label="账户" prop="username">
               <el-input type="text" v-model="ruleForm.username"></el-input>
             </el-form-item>
-            <el-form-item label="密码" prop="password">
+            <el-form-item  class="loginText" label="密码" prop="password">
               <el-input type="password" v-model="ruleForm.password"></el-input>
             </el-form-item>
             <el-form-item>
@@ -93,18 +93,18 @@
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-  .login {
+<style>
+  .loginText label{
     color:gray;
     width: 100%;
     height: 100%;
   }
 
-  .layout {
+  .login .layout {
     margin-top: 300px;
   }
 
-  .el-col {
+  .loginBox{
     background: #fff;
     padding: 2em;
     opacity: 0.9;

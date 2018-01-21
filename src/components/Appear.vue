@@ -89,4 +89,7 @@ export default {
 .el-upload-dragger {
   width: 100%;
 }
+.appear label{ 
+      color: #fff;
+}
 </style>
