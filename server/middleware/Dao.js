@@ -10,14 +10,17 @@ const sql = {
   queryDanmuByUser: 'SELECT rid,uid,nn,txt,time FROM danmu WHERE nn = ? ORDER BY time LIMIT ?,?',
   queryDanmuByUserFuzzy: 'SELECT rid,uid,nn,txt,time FROM danmu WHERE nn LIKE ? LIMIT ?,?',  
   queryDanmuByUid: 'SELECT rid,uid,nn,txt,time FROM danmu WHERE uid = ? ORDER BY time LIMIT ?,?',
+  queryDanmuByUidLimit:'SELECT nn,txt FROM danmu where uid = ? ORDER BY time DESC LIMIT 0,30',
   getUserCount: 'SELECT count(*) AS count FROM user ',
   getDanmuCount: 'SELECT count(*) AS count FROM  danmu WHERE nn = ?',
   getDanmuCountByUid: 'SELECT count(*) AS count FROM  danmu WHERE uid = ?',
   getDanmuCountFuzzy: 'SELECT count(*) AS count FROM  danmu WHERE nn LIKE ?',  
   addDanmu: 'INSERT INTO danmu(rid,uid,nn,txt,time) VALUES (?,?,?,?,?)',
   addBlacker: 'INSERT INTO blacker(sid,did,snic,dnic,endtime) VALUES(?,?,?,?,?)',
-  getMute:"SELECT snic,count(*) AS count FROM blacker GROUP BY snic ORDER BY count(*) DESC"
-  // getTotal = ""
+  getMute:'SELECT snic,count(*) AS count FROM blacker GROUP BY snic ORDER BY count(*) DESC',
+  getReviewCount:'SELECT count(*) AS count FROM review ',
+  getReview:'SELECT * FROM review ORDER BY identifer DESC LIMIT ?,?'
+  
 }
 
 let pool = mysql.createPool(db.mysql);
@@ -159,6 +162,33 @@ let exec = {
           pool.getConnection((err, connection) => {
             connection.query({
               sql: sql.getAllUser,
+              timeout: 4000,
+              values: [cur, 20]
+            }, (error, results, fields) => {
+              if (error) reject(error);
+              result.result = results;
+              resolve(result);
+              connection.release();
+            });
+          });
+          connection.release();          
+        });
+      });
+    });
+  },
+  getReview(cur) {
+    return new Promise((resolve, reject) => {
+      pool.getConnection((err, connection) => {
+        connection.query({
+          sql: sql.getReviewCount,
+          timeout: 3000,
+        }, (error, count, fields) => {
+          if (error) reject(error);
+          let result ={};
+          result.total = count?count[0].count:0;
+          pool.getConnection((err, connection) => {
+            connection.query({
+              sql: sql.getReview,
               timeout: 4000,
               values: [cur, 20]
             }, (error, results, fields) => {

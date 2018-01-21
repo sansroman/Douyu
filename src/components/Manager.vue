@@ -143,15 +143,7 @@
       }
     },
     mounted() {
-      // let self = this;
-      // axios
-      //   .get("/api/allUser")
-      //   .then(function (response) {
-      //     self.userData = response.data;
-      //   })
-      //   .catch(function (error) {
-      //     self.$message.error(error);
-      //   });
+
       this.handleCurrentChange(1);
     },
     computed:{
