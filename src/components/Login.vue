@@ -110,8 +110,5 @@
     opacity: 0.9;
   }
 
-  .login-form label {
-    color: #000;
-    font-weight: 500;
-  }
+
 </style>

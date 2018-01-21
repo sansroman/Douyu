@@ -2,7 +2,7 @@
   <div class="login">
     <el-row :gutter="10" class="layout">
       <el-col :xl="{span:8,offset:8}" :xs="{span:22,offset:1}" :sm="{span:22,offset:1}" :md="{span:22,offset:1}" :lg="{span:8,offset:8}">
-          <div class="login-form">
+          <div id="register-form">
               <el-form label-width="100px" label-position="right" ref="ruleForm" :rules="rules" :model="ruleForm" status-icon>
                 <el-form-item label="账户" prop="username">
                   <el-input type="text" v-model="ruleForm.username" ></el-input>
@@ -47,14 +47,20 @@ export default {
     }
     };
     let validatePass2 = (rule, value, callback) => {
-    if (value === '') {
-        callback(new Error('请再次输入密码'));
-    } else if (value !== this.ruleForm.password) {
-        callback(new Error('两次输入密码不一致!'));
-    } else {
-        callback();
-    }
+      if (value === '') {
+          callback(new Error('请再次输入密码'));
+      } else if (value !== this.ruleForm.password) {
+          callback(new Error('两次输入密码不一致!'));
+      } else {
+          callback();
+      }
     };
+    let validateUser = (rule,value,callback)=>{
+      console.log(value.match(/^[a-zA-Z0-9_]{1,}$/));
+      if(value === "")callback(new Error('请输入用户名'))
+      else if(value.match(/^[a-zA-Z0-9_]{1,}$/)==null) callback(new Error('只能是数字，字母或者下划线'))
+      else callback();
+    }
     return {
       ruleForm: {
         username: "",
@@ -63,7 +69,7 @@ export default {
         checkPass:""
       },
       rules: {
-        username: [{ required: true, message: "请输入用户名", trigger: "blur" }],
+        username: [{ required: true,validator:validateUser,trigger: "blur" }],
         douyunn:[{required: true,trigger: "blur" }],        
         password:[{required: true,validator:validatePass,trigger: "blur" }],
         checkPass:[{required: true,validator:validatePass2,trigger: "blur" }],
@@ -103,11 +109,11 @@ export default {
 </script scoped>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style>
     .layout{
       margin-top: 20px;
     }
-    .login .el-form-item{
+    #register-form label{ 
       color: #fff;
     }
 </style>
