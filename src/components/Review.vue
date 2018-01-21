@@ -1,7 +1,7 @@
 <template>
   <div class="review">
         <el-table 
-              border
+              bord表er
               :data="appearData" 
               >
               <el-table-column type="expand">
@@ -14,11 +14,11 @@
               </el-table-column>
               <el-table-column :fixed="this.$root.$data.isMoblie" prop="identifer" label="申诉编号" width="100">
               </el-table-column>
-              <el-table-column prop="douyunn" label="申诉人" width="180">
+              <el-table-column prop="nn" label="申诉人" width="180">
               </el-table-column>
               <el-table-column prop="reason" label="申诉原因" >
               </el-table-column>
-              <el-table-column prop="process" label="处理人" width="180">
+              <el-table-column prop="processer" label="处理人" width="180">
               </el-table-column>
               <el-table-column prop="date" label="处理时间" width="120">
               </el-table-column>
@@ -43,6 +43,16 @@
                 </template>
               </el-table-column>
         </el-table>
+        <el-pagination
+          background
+          v-show='isHiddle'
+          layout="prev, pager, next"
+          @current-change="handleCurrentChange"
+          :small="this.$root.$data.isMoblie"
+          :current-page="currentPage"
+          :page-size="20"
+          :total='total'>
+        </el-pagination>
   </div>
 </template>
 <script>
@@ -52,101 +62,26 @@ export default {
   name: "Appear",
   data() {
     return {
-      appearData:[
-        {
-          identifer:1,
-          douyunn:"南门头牛肉丸",
-          reason:"起哄被封了30天",
-          tag:0,
-          process:"",
-          date:"",
-          remark:"",
-          query:[
-            {
-            txt:"#上香",
-            date:"2017-01-01"
-          }
-          ]
-
-        },{
-          identifer:2,
-          douyunn:"德云色丶克烈娃",
-          reason:"房管真的真实，直接给我了30天",
-          tag:0,
-          process:"",
-          date:"",
-          remark:"",
-          query:[
-            {
-            txt:"房管来个禁言套餐",
-            date:"2017-12-31"
-          }
-          ]
-
-        },{
-          identifer:3,
-          douyunn:"秃胖传奇",
-          reason:"油了一下被封了30天",
-          tag:0,
-          process:"",
-          date:"",
-          remark:"",
-          query:[
-            {
-            txt:"秃子你的头会反光",
-            date:14512235423
-          }
-          ]
-
-        },{
-          identifer:4,
-          douyunn:"南门头牛肉丸",
-          reason:"油了一下被封了30天",
-          tag:0,
-          remark:"",
-          query:[
-            {
-            txt:"秃子你的头会反光",
-            date:"2017-12-30"
-            },
-            {
-            txt:"666666",
-            date:"2017-12-30"
-            },
-            {
-            txt:"德云色去哪我去哪",
-            date:"2017-12-30"
-            }
-          ]
-
-        },{
-          identifer:4,
-          douyunn:"开哥无敌",
-          reason:"给你爸解封",
-          tag:0,
-          remark:"",
-          query:[
-            {
-            txt:"NMSL",
-            date:"2017-12-30"
-            },
-            {
-            txt:"垃圾主播",
-            date:"2017-12-30"
-            },
-            {
-            txt:"云色缺德",
-            date:"2017-12-30"
-            }
-          ]
-
-        }
-        
-      ],
+      total:0,
+      appearData:[],
+      currentPage:1,
       filterList:['待处理','已通过','已拒绝']
     };
   },
   methods: {
+    handleCurrentChange(cur){
+        let self = this;
+        cur--;
+        axios
+          .get("/api/review?cur="+cur)
+          .then(function (response) {
+            self.appearData = response.data.result;
+            self.total = response.data.total
+          })
+          .catch(function (error) {
+            self.$message.error(error.response.data);
+          });
+      },
     register(formName) {
 
     },
@@ -200,7 +135,8 @@ export default {
       });
     }
   },
-  computed:{
+  mounted(){
+    this.handleCurrentChange(1);
 
   }
 

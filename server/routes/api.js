@@ -14,6 +14,7 @@ let modifyUser = require('../middleware/Dao').modifyUser;
 let queryDanmuByUser = require('../middleware/Dao').queryDanmuByUser;
 let queryDanmuByUid = require('../middleware/Dao').queryDanmuByUid;
 let GetMuteList = require('../middleware/Dao').GetMuteList;
+let getReview = require('../middleware/Dao').getReview;
 
 router.get('/statistics',(req,res,next)=>{
   req.roles = {
@@ -91,6 +92,22 @@ router.get('/allUser', (req, res, next) => {
 }, authentication.role, (req, res) => {
   let cur = req.query.cur * 20 || 0;
   getAllUser(cur)
+    .then((results) => {
+      res.status(200).send(results);
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+});
+
+router.get('/review', (req, res, next) => {
+  req.roles = {
+    query: 3
+  }
+  next();
+}, authentication.role, (req, res) => {
+  let cur = req.query.cur * 20 || 0;
+  getReview(cur)
     .then((results) => {
       res.status(200).send(results);
     })
