@@ -272,7 +272,6 @@ ListenRoom.prototype.start= function(){
             addDanmu(this.temp[index])
             index_text++;
         }
-        console.log(index_text);
         this.temp = [];
     }, 45000);    
     

@@ -107,9 +107,10 @@ export default {
     },
     handleCurrentChange(cur) {
       let self = this;
-      let queryStr= "/api/danmu?douyunn=" + self.querytext + "&cur=" +cur;
-      cur = cur - 1;    
-      if(this.select==1) queryStr = "/api/danmu?douyunn=" + self.querytext + "&cur=" +cur+"&fuzzy=true";
+      let queryStr;
+      cur = cur - 1; 
+      if(this.select==0)queryStr = "/api/danmu?douyunn=" + self.querytext + "&cur=" +cur;
+      else if(this.select==1) queryStr = "/api/danmu?douyunn=" + self.querytext + "&cur=" +cur+"&fuzzy=true";
       else if(this.select==2) queryStr = "/api/danmu?uid=" + self.querytext+ "&cur=" +cur;
       axios
         .get(queryStr)

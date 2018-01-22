@@ -31,6 +31,6 @@ html,body{
   padding: 0;
 }
 .el-form-item__label{
-  color: #fff; 
+  color:#fff;
 }
 </style>

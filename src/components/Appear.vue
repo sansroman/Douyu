@@ -3,23 +3,17 @@
     <el-row :gutter="10" class="layout">
       <el-col :xl="{span:12,offset:6}" :xs="{span:22,offset:1}" :sm="{span:22,offset:1}" :md="{span:22,offset:1}" :lg="{span:12,offset:6}">
               <el-form label-width="100px" label-position="right" ref="ruleForm" :rules="rules" :model="ruleForm" status-icon>
-                <el-form-item label="斗鱼ID" prop="douyunn">
-                  <el-input type="text" v-model="ruleForm.douyunn" ></el-input>
+                <el-form-item  prop="douyunn">
+                  <el-input type="text" v-model="ruleForm.nn" >
+                    <el-select class="uid_nn" v-model="select" slot="prepend" placeholder="请选择">
+                      <el-option label="龙珠昵称" value="1"></el-option>
+                      <el-option label="龙珠UID" value="2"></el-option>
+                    </el-select>
+                  </el-input>
                 </el-form-item>               
                 <el-form-item label="申诉原因" prop="reason">
                   <el-input type="textarea" v-model="ruleForm.reason" autosize></el-input>
                 </el-form-item>
-                <!-- <el-form-item label="" prop="expvmImg">
-                    <el-upload
-                    class="upload"
-                    drag
-                    action="/file"
-                    multiple>
-                        <i class="el-icon-upload"></i>
-                        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-                        <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
-                    </el-upload>
-                </el-form-item> -->
                 <el-form-item>
                   <el-button type="primary" @click="register('ruleForm')">提交</el-button>
                   <el-button @click="reset('ruleForm')">重置</el-button>
@@ -39,12 +33,13 @@ export default {
     return {
       ruleForm: {
         reason: "",
-        douyunn: ""
+        nn: ""
       },
       rules: {
-        douyunn: [{ required: true, message: "请输入斗鱼ID", trigger: "blur" }],
+        nn: [{ required: true, message: "请输入昵称或者UID", trigger: "blur" }],
         reason: [{ required: true, message: "请输入申诉原因", trigger: "blur" }]
-      }
+      },
+      select:1
     };
   },
   methods: {
@@ -54,7 +49,7 @@ export default {
         if (vaild) {
           axios
             .post("/appear", {
-              douyunn: this.ruleForm.douyunn,
+              douyunn: this.ruleForm.nn,
               reason: this.ruleForm.reason
             })
             .then(function(response) {
@@ -82,11 +77,17 @@ export default {
 </script scoped>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style>
 .el-upload {
   width: 100%;
 }
 .el-upload-dragger {
   width: 100%;
+}
+.appear label{ 
+      color: #fff;
+}
+.uid_nn{
+  width: 130px;
 }
 </style>
