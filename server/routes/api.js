@@ -15,7 +15,7 @@ let queryDanmuByUser = require('../middleware/Dao').queryDanmuByUser;
 let queryDanmuByUid = require('../middleware/Dao').queryDanmuByUid;
 let GetMuteList = require('../middleware/Dao').GetMuteList;
 let getReview = require('../middleware/Dao').getReview;
-
+let getDanmuCount = require('../middleware/Dao').getDanmuCount;
 router.get('/statistics',(req,res,next)=>{
   req.roles = {
     manager: 3
@@ -32,7 +32,10 @@ router.get('/statistics',(req,res,next)=>{
           temp.mute = results[0]||0;
           appear.get([now.format('YYYYMMDD')], function (err, results) {
             temp.appear = results[0]||0;
-            res.json(temp);
+            getDanmuCount().then((results)=>{
+              temp.total = results;
+              res.json(temp); 
+            })
           }) 
         }) 
 
