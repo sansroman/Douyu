@@ -2,6 +2,15 @@
   <div id="total">
        <h2>Dashborad</h2>
        <el-row>
+         <el-col :md="4" :xs="12" :sm="6" class="stats-container">
+              <div class="stats-heading">弹幕总数</div>
+              <div class="stats-body-alt"> 
+                <div class="text-center p-small">
+                  <span class="text-top"></span>{{totalto}}W
+                </div>
+              </div>
+              <div class="stats-footer">more info</div>
+         </el-col>
          <el-col :md="3" :xs="12" :sm="6" class="stats-container">
               <div class="stats-heading">今日访客</div>
               <div class="stats-body-alt"> 
@@ -38,6 +47,7 @@
               </div>
               <div class="stats-footer">more info</div>
          </el-col>
+
        </el-row>
 
   </div>
@@ -62,6 +72,7 @@ h2{
     padding-right: 15px;
     padding-left: 15px;
 }
+
 </style>
 
 
@@ -75,7 +86,8 @@ export default {
         views:0,
         queryCount:0,
         appear:0,
-        mute:0
+        mute:0,
+        total:0
       }
     };
   },
@@ -88,6 +100,11 @@ export default {
     }).catch((err)=>{
       selt.$message.error(error.response.data);
     })
+  },
+  computed:{
+    totalto(){
+      return (this.statistics.total/10000).toFixed(2);
+    }
   }
 };
 </script>  

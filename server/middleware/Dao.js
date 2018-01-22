@@ -12,15 +12,15 @@ const sql = {
   queryDanmuByUid: 'SELECT rid,uid,nn,txt,time FROM danmu WHERE uid = ? ORDER BY time LIMIT ?,?',
   queryDanmuByUidLimit:'SELECT nn,txt FROM danmu where uid = ? ORDER BY time DESC LIMIT 0,30',
   getUserCount: 'SELECT count(*) AS count FROM user ',
-  getDanmuCount: 'SELECT count(*) AS count FROM  danmu WHERE nn = ?',
+  getDanmuCountBynn: 'SELECT count(*) AS count FROM  danmu WHERE nn = ?',
   getDanmuCountByUid: 'SELECT count(*) AS count FROM  danmu WHERE uid = ?',
   getDanmuCountFuzzy: 'SELECT count(*) AS count FROM  danmu WHERE nn LIKE ?',  
   addDanmu: 'INSERT INTO danmu(rid,uid,nn,txt,time) VALUES (?,?,?,?,?)',
   addBlacker: 'INSERT INTO blacker(sid,did,snic,dnic,endtime) VALUES(?,?,?,?,?)',
   getMute:'SELECT snic,count(*) AS count FROM blacker GROUP BY snic ORDER BY count(*) DESC',
   getReviewCount:'SELECT count(*) AS count FROM review ',
-  getReview:'SELECT * FROM review ORDER BY identifer DESC LIMIT ?,?'
-  
+  getReview:'SELECT * FROM review ORDER BY identifer DESC LIMIT ?,?',
+  getDanmuCount:'SELECT count(*) AS count FROM  danmu'
 }
 
 let pool = mysql.createPool(db.mysql);
@@ -43,6 +43,20 @@ let exec = {
       connection.release();
     })
   },
+  getDanmuCount() {
+    return new Promise((resolve, reject) => {
+      pool.getConnection((err, connection) => {
+        connection.query({
+          sql: sql.getDanmuCount,
+          timeout: 2000,
+        }, (error, results, fields) => {
+          if (error) reject(error);
+          resolve(results?results[0].count:0);
+          connection.release();
+        });
+      });
+    })
+  },
   addBlacker(data) {
     pool.getConnection((err, connection) => {
       connection.query({
@@ -62,7 +76,7 @@ let exec = {
   },
   queryDanmuByUser(douyunn, cur,fuzzy) {
     return new Promise((resolve, reject) => {
-      let countState = fuzzy?sql.getDanmuCountFuzzy:sql.getDanmuCount;
+      let countState = fuzzy?sql.getDanmuCountFuzzy:sql.getDanmuCountBynn;
       let userState = fuzzy?sql.queryDanmuByUserFuzzy:sql.queryDanmuByUser;
       let time = fuzzy?10000:3000;
       pool.getConnection((err, connection) => {
