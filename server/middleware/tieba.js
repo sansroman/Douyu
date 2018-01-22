@@ -5,7 +5,7 @@ let contentArr =[],
     tiebaPage =1;
       
 function fetchTieba(url){
-    let tempUrl = tiebaPage==1?url: url+"？pn="+tiebaPage;
+    let tempUrl = url+"?pn="+tiebaPage;
     https.get(tempUrl,(res)=>{
         let html = '';
         res.setEncoding('utf-8');
@@ -14,23 +14,21 @@ function fetchTieba(url){
         })
         res.on("end",()=>{
             const $ = cheerio.load(html);
-            let page = $('.l_reply_num');
+            let page = $('.l_reply_num .red').eq(1).text().trim();
             const txtArr = $('.j_d_post_content');         
-            
             txtArr.each((index,element)=>{
                 let item = $(element).text().trim();
                 formatFilter(item);
             });
             tiebaPage++;
-            if(tiebaPage<page)fetchTieba(url);
+            if(tiebaPage<=page)fetchTieba(url);
             else console.log(contentArr);
-            console.log(new Date().getTime())
         })
     })
 }
 
 function formatFilter(item){
-
+    console.log(item)
     contentArr.push(item);
 }
     
