@@ -98,7 +98,8 @@ export default {
     .then(function (response) {
       self.statistics = response.data;
     }).catch((err)=>{
-      selt.$message.error(error.response.data);
+      self.$message.error(error.response.data);
+      if(err.response.status==403)self.$router.push('/login');
     })
   },
   computed:{
