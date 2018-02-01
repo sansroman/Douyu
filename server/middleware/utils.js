@@ -267,7 +267,7 @@ ListenRoom.prototype.start= function(){
         this.clients[index].on('error',e=>{console.log('error',e);this.clients[index].start()});
         this.clients[index].start();     
     })
-    setInterval(() => {         
+    setInterval(() => {
         for(let index in this.temp){
             addDanmu(this.temp[index])
             index_text++;

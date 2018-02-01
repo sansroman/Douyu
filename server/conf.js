@@ -11,7 +11,7 @@ module.exports = {
     }
   },
   certOpts:{
-    cert: fs.readFileSync(path.join(process.cwd(),'/sslcert/fullchain.pem')),
-    key: fs.readFileSync(path.join(process.cwd(),'/sslcert/privkey.pem'))
+    cert: fs.readFileSync(path.join('/home/ubuntu/work/Douyu/server/sslcert/fullchain.pem')),
+    key: fs.readFileSync(path.join('/home/ubuntu/work/Douyu/server/sslcert/privkey.pem'))
   }
 }
