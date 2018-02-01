@@ -16,10 +16,10 @@ let router = new Router({
   routes: [
     {
       path:'/',
-      redirect:'login'
+      redirect:'index'
     },{
       path:'',
-      redirect:'login'
+      redirect:'index'
     },
     {
       path:'/register',
