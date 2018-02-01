@@ -129,6 +129,7 @@ export default {
         })
         .catch(function(error) {
           self.$message.error(error.response.data);
+          if(error.response.status==403)self.$router.push('/login');
         });
     }
   },

@@ -6,7 +6,7 @@
     >
       <el-table-column sortable :fixed="this.$root.$data.isMoblie" prop="username" label="用户名" width="150">
       </el-table-column>
-      <el-table-column prop="douyunn" label="斗鱼ID" width="120">
+      <el-table-column prop="douyunn" label="斗鱼ID" width="140">
       </el-table-column>
       <el-table-column prop="uid" label="斗鱼UID" width="120">
       </el-table-column>
@@ -107,6 +107,7 @@
           })
           .catch(function (error) {
             self.$message.error(error.response.data);
+            if(error.response.status==403)self.$router.push('/login');
           });
       },
       modifyUser(data) {
