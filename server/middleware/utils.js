@@ -1,3 +1,22 @@
+/*
+ *      TODO:
+ *          1. 修改筛选代码,在接受到信息类型后直接筛选
+ *          2. 追踪错误信息,完善日志记录
+ *       
+ * 
+ */
+
+
+
+
+
+
+
+
+
+
+
+
 const addDanmu = require('./Dao').addDanmu;
 const addBlacker = require('./Dao').addBlacker;
 let index_text = 0;
