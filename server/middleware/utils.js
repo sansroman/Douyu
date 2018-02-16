@@ -1,6 +1,32 @@
 const addDanmu = require('./Dao').addDanmu;
 const addBlacker = require('./Dao').addBlacker;
 let index_text = 0;
+let log4js = require('log4js');
+log4js.configure({
+  appenders: {
+    access: {
+      type: 'DateFile',
+      filename: 'logs/debug.log',
+      pattern:'-yyyy-MM-dd.log',
+      alwaysIncludePattern:true,
+      category:'access',
+      maxLogSize: 10 * 1024 * 1024
+    },
+    console:{type:'console'}
+  },
+  categories: {
+    default: {
+      appenders: ['console'],
+      level: 'trace'
+    },
+    debug:{
+      appenders:['access'],
+      level:'debug'
+    }
+  }
+})
+
+const logger = log4js.getLogger('debug');
 
 
 const ws = require('ws')
@@ -213,7 +239,7 @@ ListenRoom.prototype.start= function(){
     this.roomarr.forEach((element,index)=>{
         this.clients[index] = new longzhu_danmu(element);
         this.clients[index].on('message',msg=>{if(msg.type==="chat")this.save(msg)});
-        this.clients[index].on('error',e=>{console.log('error',e);this.clients[index].start()});
+        this.clients[index].on('error',e=>{logger.debug(e);this.clients[index].start()});
         this.clients[index].start();     
     })
     setInterval(() => {

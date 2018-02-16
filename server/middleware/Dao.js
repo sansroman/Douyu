@@ -43,7 +43,7 @@ let exec = {
       connection.release();
     })
   },
-  getDanmuCount() {
+  getDanmuCount() {  
     return new Promise((resolve, reject) => {
       pool.getConnection((err, connection) => {
         connection.query({
