@@ -11,12 +11,11 @@
 
 
 //  引入模块
-const addDanmu = require('./Dao').addDanmu,
-  log4js = require('log4js'),
-  ws = require('ws'),
-  events = require('events'),
-  request = require('request-promise'),
-  socksAgent = require('socks-proxy-agent');
+const log4js = require('log4js'),
+      ws = require('ws'),
+      events = require('events'),
+      request = require('request-promise'),
+      socksAgent = require('socks-proxy-agent');
 
 //  初始化配置
 const logger = log4js.getLogger('debug'),
@@ -42,10 +41,10 @@ class DanmuListener extends events {
   set_proxy(proxy) {
     this._agent = new socksAgent(proxy);
   }
-  async start(){
-      this._clientList = [];
-      this._uidList = await this._get_room_uid();
-      this._start_ws_chats();
+  async start() {
+    this._clientList = [];
+    this._uidList = await this._get_room_uid();
+    this._start_ws_chats();
   }
   async _get_room_uid() {
     try {
@@ -65,7 +64,7 @@ class DanmuListener extends events {
     }
   }
   _start_ws_chats() {
-    this._uidList.forEach((element,index) => {
+    this._uidList.forEach((element, index) => {
       this._clientList.push(new ws(`ws://mbgows.plu.cn:8805/?room_id=${element}&batch=1&group=0&connType=1`, {
         perMessageDeflate: false,
         agent: this._agent
@@ -74,52 +73,52 @@ class DanmuListener extends events {
         this.emit('error', err)
       })
       this._clientList[index].on('open', this._on_connect.bind(this))
-      this._clientList[index].on('message',this._on_msg.bind(this,element))
+      this._clientList[index].on('message', this._on_msg.bind(this, element))
 
     });
   }
-  _on_connect(){
-     this.emit('connect');
+  _on_connect() {
+    this.emit('connect');
   }
-  _on_msg(element,msg){  
+  _on_msg(element, msg) {
     try {
-        msg = JSON.parse(msg)
-        
-        if (msg instanceof Array) {
-            msg.forEach((m) => {
-              this._format_msg(m,element)
-            })
-        } else{
-            this._format_msg(msg,element)
-        }
+      msg = JSON.parse(msg)
+
+      if (msg instanceof Array) {
+        msg.forEach((m) => {
+          this._format_msg(m, element)
+        })
+      } else {
+        this._format_msg(msg, element)
+      }
     } catch (e) {
-        this.emit('error', e)
+      this.emit('error', e)
     }
   }
 
-  _format_msg(msg,element){
+  _format_msg(msg, element) {
     let msg_obj;
-    if(msg.type=='chat'){
-      msg_obj = this._filter_chat(msg,element)
-      this.emit('message',msg_obj)
+    if (msg.type == 'chat') {
+      msg_obj = this._filter_chat(msg, element)
+      this.emit('message', msg_obj)
     }
 
   }
-  _filter_chat(msg,element){ 
+  _filter_chat(msg, element) {
     return {
-      roomId:msg.msg.RoomId||element,
-      uid:msg.msg.user.uid,
-      name:msg.msg.user.username,
-      content:msg.msg.content,
-      time:this._parse_time(msg)
+      roomId: msg.msg.RoomId || element,
+      uid: msg.msg.user.uid,
+      name: msg.msg.user.username,
+      content: msg.msg.content,
+      time: this._parse_time(msg)
     }
   }
-  _parse_time(msg){
+  _parse_time(msg) {
     try {
-        const time_array = msg.msg.time.match(/Date\((\d+)/)
-        return parseInt(time_array[1])
+      const time_array = msg.msg.time.match(/Date\((\d+)/)
+      return parseInt(time_array[1])
     } catch (e) {
-        return new Date().getTime()
+      return new Date().getTime()
     }
   }
 
