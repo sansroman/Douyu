@@ -43,10 +43,11 @@ class DanmuListener extends events {
   set_proxy(proxy) {
     this._agent = new socksAgent(proxy);
   }
-  async start(){
+  async start(callback){
       this._clientList = [];
       this._uidList = await this._get_room_uid();
       this._start_ws_chats();
+      callback();
   }
   async _get_room_uid() {
     try {
@@ -60,7 +61,6 @@ class DanmuListener extends events {
         let item = body.match(/var roomId = (\d+);/)[1];
         uid_array.push(item);
       }
-      console.log(uid_array)
       return uid_array
     } catch (error) {
       this.emit('error', new Error('Fail to get room id'))
@@ -76,39 +76,70 @@ class DanmuListener extends events {
         this.emit('error', err)
       })
       this._clientList[index].on('open', this._on_connect.bind(this))
-      this._clientList[index].on('close', this._stop.bind(this))
-      this._clientList[index].on('message', this._on_msg.bind(this))
+      this._clientList[index].on('message',this._on_msg.bind(this,element))
 
     });
   }
   _on_connect(){
      this.emit('connect');
   }
-  _on_msg(msg){
+  _on_msg(element,msg){  
     try {
         msg = JSON.parse(msg)
+        
         if (msg instanceof Array) {
             msg.forEach((m) => {
-                this._format_msg(m)
+              this._format_msg(m,element)
             })
-        } else {
-            this._format_msg(msg)
+        } else{
+            this._format_msg(msg,element)
         }
     } catch (e) {
         this.emit('error', e)
     }
   }
 
-  _format_msg(msg){
-      console.log(msg);
+  _format_msg(msg,element){
+    let msg_obj;
+    if(msg.type=='chat'){
+      msg_obj = this._filter_chat(msg,element)
+      this.emit('message',msg_obj)
+    }
 
   }
-  _stop(){
-
+  _filter_chat(msg,element){ 
+    return {
+      roomId:msg.msg.RoomId||element,
+      uid:msg.msg.user.uid,
+      name:msg.msg.user.username,
+      content:msg.msg.content,
+      time:this._parse_time(msg)
+    }
+  }
+  _parse_time(msg){
+    try {
+        const time_array = msg.msg.time.match(/Date\((\d+)/)
+        return parseInt(time_array[1])
+    } catch (e) {
+        return new Date().getTime()
+    }
   }
 
 }
 
-let longzhu = new DanmuListener(['777777', 'y198888','m193053']);
-
-longzhu.start();
+let longzhu = new DanmuListener(['182888', '101794','y199999']);
+let temp = [];
+longzhu.start(()=>{
+  setInterval(() => {
+    for(let index in temp){
+        index_text++;
+        console.log(temp[index])
+    }
+    temp = [];
+}, 45000);  
+});
+longzhu.on('message',(msg)=>{
+  console.log(msg)
+  console.log(temp.length)  
+  temp.push(msg)
+})
