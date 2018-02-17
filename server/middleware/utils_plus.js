@@ -11,8 +11,7 @@
 
 
 //  引入模块
-const addDanmu = require('./Dao').addDanmu,
-  log4js = require('log4js'),
+const log4js = require('log4js'),
   ws = require('ws'),
   events = require('events'),
   request = require('request-promise'),

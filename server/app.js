@@ -9,7 +9,7 @@ var index = require('./routes/index');
 var api = require('./routes/api');
 var app = express();
 var DanmuListener = require('./middleware/utils_plus');
-
+var addDanmu = require('./middleware/Dao').addDanmu;
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -60,6 +60,7 @@ let longzhu = new DanmuListener(['182888', '101794','y199999']);
 let temp = [];
 longzhu.start() 
 longzhu.on('message',(msg)=>{
+  console.log("add one");
   addDanmu([msg.roomId,msg.uid,msg.name,msg.content,msg.time]);
 })
 
