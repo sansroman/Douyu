@@ -8,7 +8,7 @@ var bodyParser = require('body-parser');
 var index = require('./routes/index');
 var api = require('./routes/api');
 var app = express();
-var ListenRoom = require('./middleware/utils');
+var DanmuListener = require('./middleware/utils_plus');
 
 
 // uncomment after placing your favicon in /public
@@ -56,7 +56,11 @@ app.use(function(err, req, res, next) {
 
 
 
-let longzhu =  new ListenRoom(['777777','xuxubaobao']);
-longzhu.start();
+let longzhu = new DanmuListener(['182888', '101794','y199999']);
+let temp = [];
+longzhu.start() 
+longzhu.on('message',(msg)=>{
+  addDanmu([msg.roomId,msg.uid,msg.name,msg.content,msg.time]);
+})
 
 module.exports = app;

@@ -12,7 +12,6 @@
 
 //  引入模块
 const addDanmu = require('./Dao').addDanmu,
-  addBlacker = require('./Dao').addBlacker,
   log4js = require('log4js'),
   ws = require('ws'),
   events = require('events'),
@@ -43,11 +42,10 @@ class DanmuListener extends events {
   set_proxy(proxy) {
     this._agent = new socksAgent(proxy);
   }
-  async start(callback){
+  async start(){
       this._clientList = [];
       this._uidList = await this._get_room_uid();
       this._start_ws_chats();
-      callback();
   }
   async _get_room_uid() {
     try {
@@ -127,19 +125,4 @@ class DanmuListener extends events {
 
 }
 
-let longzhu = new DanmuListener(['182888', '101794','y199999']);
-let temp = [];
-longzhu.start(()=>{
-  setInterval(() => {
-    for(let index in temp){
-        index_text++;
-        console.log(temp[index])
-    }
-    temp = [];
-}, 45000);  
-});
-longzhu.on('message',(msg)=>{
-  console.log(msg)
-  console.log(temp.length)  
-  temp.push(msg)
-})
+module.exports = DanmuListener;
