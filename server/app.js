@@ -56,11 +56,10 @@ app.use(function(err, req, res, next) {
 
 
 
-let longzhu = new DanmuListener(['182888', '101794','y199999']);
+let longzhu = new DanmuListener(['777777','xuxubaobao']);
 let temp = [];
 longzhu.start() 
 longzhu.on('message',(msg)=>{
-  console.log("add one");
   addDanmu([msg.roomId,msg.uid,msg.name,msg.content,msg.time]);
 })
 
