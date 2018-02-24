@@ -5,6 +5,8 @@ let query = require('../middleware/statistics').query;
 let users = require('../middleware/statistics').users;
 let appear = require('../middleware/statistics').appear;
 let mute = require('../middleware/statistics').mute;
+let total = require('../middleware/statistics').total;
+
 let authentication = require('../authentication');
 let getAllUser = require('../middleware/Dao').getAllUser;
 let delUserByUsername = require('../middleware/Dao').delUserByUsername;
@@ -30,12 +32,10 @@ router.get('/statistics', (req, res, next) => {
         temp.mute = results[0] || 0;
         appear.get([now.format('YYYYMMDD')], function (err, results) {
           temp.appear = results[0] || 0;
-          // getDanmuCount().then((results) => {
-          //   temp.total = results;
-          //   res.json(temp);
-          // })
-          temp.total = 0;
-          res.json(temp);
+            total.get([now.format('YYYYMMDD')], function (err, results) {
+              temp.total = results[0] || 0;
+              res.json(temp);
+            })
         })
       })
 
