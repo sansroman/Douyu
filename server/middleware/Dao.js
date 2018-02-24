@@ -48,7 +48,7 @@ let exec = {
       pool.getConnection((err, connection) => {
         connection.query({
           sql: sql.getDanmuCount,
-          timeout: 2000,
+          timeout: 10000,
         }, (error, results, fields) => {
           if (error) reject(error);
           resolve(results?results[0].count:0);

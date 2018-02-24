@@ -22,7 +22,6 @@ router.get('/statistics',(req,res,next)=>{
   }
   next();
 },authentication.role,(req,res)=>{
-
     query.get([now.format('YYYYMMDD')], function (err, results) {
       let temp = {};
       temp.queryCount = results[0]||0;
@@ -41,10 +40,6 @@ router.get('/statistics',(req,res,next)=>{
 
       }) 
     });
-  
-
-
-
 })
 router.post('/appear',(req,res,next)=>{
     appear.incr();
