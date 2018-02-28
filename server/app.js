@@ -65,5 +65,8 @@ longzhu.on('message',(msg)=>{
   total.incr();
   addDanmu([msg.roomId,msg.uid,msg.name,msg.content,msg.time]);
 })
+longzhu.on('error',err=>{
+  throw err;
+})
 
 module.exports = app;
