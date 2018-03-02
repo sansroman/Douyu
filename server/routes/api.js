@@ -1,12 +1,13 @@
-var express = require('express');
-var router = express.Router();
-var now = require('moment')();
-var query = require('../middleware/statistics').query;
-var users = require('../middleware/statistics').users;
-var appear = require('../middleware/statistics').appear;
-var mute = require('../middleware/statistics').mute;
+let express = require('express');
+let router = express.Router();
+let now = require('moment')();
+let query = require('../middleware/statistics').query;
+let users = require('../middleware/statistics').users;
+let appear = require('../middleware/statistics').appear;
+let mute = require('../middleware/statistics').mute;
+let total = require('../middleware/statistics').total;
 
-var authentication = require('../authentication');
+let authentication = require('../authentication');
 let getAllUser = require('../middleware/Dao').getAllUser;
 let delUserByUsername = require('../middleware/Dao').delUserByUsername;
 let findOneByUser = require('../middleware/Dao').findOneByUser;
@@ -16,41 +17,36 @@ let queryDanmuByUid = require('../middleware/Dao').queryDanmuByUid;
 let GetMuteList = require('../middleware/Dao').GetMuteList;
 let getReview = require('../middleware/Dao').getReview;
 let getDanmuCount = require('../middleware/Dao').getDanmuCount;
-router.get('/statistics',(req,res,next)=>{
+router.get('/statistics', (req, res, next) => {
   req.roles = {
     manager: 3
   }
   next();
-},authentication.role,(req,res)=>{
-
-    query.get([now.format('YYYYMMDD')], function (err, results) {
-      let temp = {};
-      temp.queryCount = results[0]||0;
-      users.get([now.format('YYYYMMDD')], function (err, results) {
-        temp.views = results[0]||0;
-        mute.get([now.format('YYYYMMDD')], function (err, results) {
-          temp.mute = results[0]||0;
-          appear.get([now.format('YYYYMMDD')], function (err, results) {
-            temp.appear = results[0]||0;
-            getDanmuCount().then((results)=>{
-              temp.total = results;
-              res.json(temp); 
+}, authentication.role, (req, res) => {
+  query.get([now.format('YYYYMMDD')], function (err, results) {
+    let temp = {};
+    temp.queryCount = results[0] || 0;
+    users.get([now.format('YYYYMMDD')], function (err, results) {
+      temp.views = results[0] || 0;
+      mute.get([now.format('YYYYMMDD')], function (err, results) {
+        temp.mute = results[0] || 0;
+        appear.get([now.format('YYYYMMDD')], function (err, results) {
+          temp.appear = results[0] || 0;
+            total.get([now.format('YYYYMMDD')], function (err, results) {
+              temp.total = results[0] || 0;
+              res.json(temp);
             })
-          }) 
-        }) 
+        })
+      })
 
-      }) 
-    });
-  
-
-
-
+    })
+  });
 })
-router.post('/appear',(req,res,next)=>{
-    appear.incr();
-},(req,res)=>{
-   let douyunn = req.body.douyunn||"";
-   let reason = req.body.reason||"";
+router.post('/appear', (req, res, next) => {
+  appear.incr();
+}, (req, res) => {
+  let douyunn = req.body.douyunn || "";
+  let reason = req.body.reason || "";
 
 })
 
@@ -61,12 +57,12 @@ router.get('/danmu', (req, res, next) => {
   }
   next();
 }, authentication.role, (req, res) => {
-  let fuzzy = req.query.fuzzy||false;
+  let fuzzy = req.query.fuzzy || false;
   let douyunn = req.query.douyunn || "";
-  let cur = req.query.cur * 20 || 0;      
-  douyunn = fuzzy?"%"+douyunn+"%":douyunn;
+  let cur = req.query.cur * 20 || 0;
+  douyunn = fuzzy ? "%" + douyunn + "%" : douyunn;
   if (douyunn) {
-    queryDanmuByUser(douyunn, cur,fuzzy).then((results) => {
+    queryDanmuByUser(douyunn, cur, fuzzy).then((results) => {
         if (results.total == 0) res.status(404).send("未找到记录");
         else res.status(200).send(results);
       })
@@ -75,7 +71,7 @@ router.get('/danmu', (req, res, next) => {
       })
   } else {
     let uid = req.query.uid || "";
-    queryDanmuByUid(uid,cur).then((results) => {
+    queryDanmuByUid(uid, cur).then((results) => {
         if (results.total == 0) res.status(404).send("未找到记录");
         else res.status(200).send(results);
       })

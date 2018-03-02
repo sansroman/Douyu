@@ -6,7 +6,7 @@
               <div class="stats-heading">弹幕总数</div>
               <div class="stats-body-alt"> 
                 <div class="text-center p-small">
-                  <span class="text-top"></span>{{totalto}}W
+                  <span class="text-top"></span>{{totalto}}K
                 </div>
               </div>
               <div class="stats-footer">more info</div>
@@ -104,7 +104,7 @@ export default {
   },
   computed:{
     totalto(){
-      return (this.statistics.total/10000).toFixed(2);
+      return (this.statistics.total/1000).toFixed(2);
     }
   }
 };
