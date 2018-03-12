@@ -10,7 +10,7 @@ var api = require('./routes/api');
 var app = express();
 var DanmuListener = require('./middleware/utils_plus');
 var addDanmu = require('./middleware/Dao').addDanmu;
-let total = require('../middleware/statistics').total;
+let total = require('./middleware/statistics').total;
 
 
 // uncomment after placing your favicon in /public

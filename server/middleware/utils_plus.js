@@ -103,6 +103,7 @@ class DanmuListener extends events {
   _format_msg(msg, element) {
     let msg_obj;
     if (msg.type == 'chat') {
+      console.log(msg)
       msg_obj = this._filter_chat(msg, element)
       this.emit('message', msg_obj)
     }
