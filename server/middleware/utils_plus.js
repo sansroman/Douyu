@@ -42,10 +42,26 @@ class DanmuListener extends events {
     this._agent = new socksAgent(proxy);
   }
   async start() {
+    if (this._starting) return
+    this._starting = true
     this._clientList = [];
     this._uidList = await this._get_room_uid();
     this._start_ws_chats();
   }
+
+  async restart(){
+    this.removeAllListeners()
+    this._stop()
+  }
+
+  async _stop() {
+    if (!this._starting) return
+    this._starting = false
+    this._client_chat && this._client_chat.terminate()
+    this._client_other && this._client_other.terminate()
+    this.emit('close')
+}
+
   async _get_room_uid() {
     try {
       let uid_array = [];
