@@ -59,7 +59,9 @@ class DanmuListener extends events {
     this._starting = false
     this._client_chat && this._client_chat.terminate()
     this._client_other && this._client_other.terminate()
-    this.emit('close')
+    this.emit('close');
+
+    start();
 }
 
   async _get_room_uid() {
