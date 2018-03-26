@@ -90,8 +90,12 @@ class DanmuListener extends events {
       })
       this._clientList[index].on('open', this._on_connect.bind(this))
       this._clientList[index].on('message', this._on_msg.bind(this, element))
+      this._clientList[index].on('error',this._on_error.bind(this))
 
     });
+  }
+  _on_error(){
+    this.emit('error');
   }
   _on_connect() {
     this.emit('connect');
@@ -115,6 +119,7 @@ class DanmuListener extends events {
   _format_msg(msg, element) {
     let msg_obj;
     if (msg.type == 'chat') {
+      console.log(msg)
       msg_obj = this._filter_chat(msg, element)
       this.emit('message', msg_obj)
     }
