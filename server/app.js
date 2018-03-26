@@ -61,9 +61,13 @@ app.use(function(err, req, res, next) {
 let longzhu = new DanmuListener(['777777','xuxubaobao']);
 let temp = [];
 longzhu.start() 
-longzhu.on('message',(msg)=>{
+longzhu.on('message',msg=>{
   total.incr();
   addDanmu([msg.roomId,msg.uid,msg.name,msg.content,msg.time]);
+})
+longzhu.on('error',msg=>{
+  console.error(msg);
+  longzhu.restart();
 })
 
 module.exports = app;

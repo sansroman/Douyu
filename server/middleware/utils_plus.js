@@ -42,10 +42,28 @@ class DanmuListener extends events {
     this._agent = new socksAgent(proxy);
   }
   async start() {
+    if (this._starting) return
+    this._starting = true
     this._clientList = [];
     this._uidList = await this._get_room_uid();
     this._start_ws_chats();
   }
+
+  async restart(){
+    this.removeAllListeners()
+    this._stop()
+  }
+
+  async _stop() {
+    if (!this._starting) return
+    this._starting = false
+    this._client_chat && this._client_chat.terminate()
+    this._client_other && this._client_other.terminate()
+    this.emit('close');
+
+    start();
+}
+
   async _get_room_uid() {
     try {
       let uid_array = [];
@@ -74,8 +92,12 @@ class DanmuListener extends events {
       })
       this._clientList[index].on('open', this._on_connect.bind(this))
       this._clientList[index].on('message', this._on_msg.bind(this, element))
+      this._clientList[index].on('error',this._on_error.bind(this))
 
     });
+  }
+  _on_error(){
+    this.emit('error');
   }
   _on_connect() {
     this.emit('connect');
@@ -99,6 +121,7 @@ class DanmuListener extends events {
   _format_msg(msg, element) {
     let msg_obj;
     if (msg.type == 'chat') {
+      console.log(msg)
       msg_obj = this._filter_chat(msg, element)
       this.emit('message', msg_obj)
     }
