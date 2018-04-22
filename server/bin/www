@@ -22,18 +22,18 @@ app.set('port', port);
 /**
  * Create HTTP server.
  */
+var httpServer = http.create(app);
+httpServer.listen(80);
+httpServer.on('error',onError);
+httpServer.on('listening',httpOnListening);
 
-
-http.createServer(app).listen(80);
-
-var httpsServer = https.createServer(certOpts, app);
 /**
  * Listen on provided port, on all interfaces.
  */
-
+var httpsServer = https.createServer(certOpts, app);
 httpsServer.listen(port);
 httpsServer.on('error', onError);
-httpsServer.on('listening', onListening);
+httpsServer.on('listening', httpsOnListening);
 
 /**
  * Normalize a port into a number, string, or false.
@@ -87,10 +87,19 @@ function onError(error) {
  * Event listener for HTTP server "listening" event.
  */
 
-function onListening() {
+function httpsOnListening() {
   var addr = httpsServer.address();
   var bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
+
+function httpOnListening() {
+  var addr = httpServer.address();
+  var bind = typeof addr === 'string'
+    ? 'pipe ' + addr
+    : 'port ' + addr.port;
+  debug('Listening on ' + bind);
+}
+
