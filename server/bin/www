@@ -16,14 +16,15 @@ var certOpts = require('../conf').certOpts;
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '443');
-app.set('port', port);
+var httpsport = normalizePort(process.env.PORT || '8443');
+var httpport = normalizePort(process.env.PORT || '8080');
+
 
 /**
  * Create HTTP server.
  */
 var httpServer = http.createServer(app);
-httpServer.listen(80);
+httpServer.listen(httpport);
 httpServer.on('error',onError);
 httpServer.on('listening',httpOnListening);
 
@@ -31,7 +32,7 @@ httpServer.on('listening',httpOnListening);
  * Listen on provided port, on all interfaces.
  */
 var httpsServer = https.createServer(certOpts, app);
-httpsServer.listen(port);
+httpsServer.listen(httpsport);
 httpsServer.on('error', onError);
 httpsServer.on('listening', httpsOnListening);
 
@@ -59,14 +60,38 @@ function normalizePort(val) {
  * Event listener for HTTP server "error" event.
  */
 
-function onError(error) {
+function httponError(error) {
   if (error.syscall !== 'listen') {
     throw error;
   }
 
-  var bind = typeof port === 'string'
-    ? 'Pipe ' + port
-    : 'Port ' + port;
+  var bind = typeof httpport === 'string'
+    ? 'Pipe ' + httpport
+    : 'Port ' + httpport;
+
+  // handle specific listen errors with friendly messages
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use');
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
+}
+
+function httpsonError(error) {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+
+  var bind = typeof httpsport === 'string'
+    ? 'Pipe ' + httpsport
+    : 'Port ' + httpsport;
 
   // handle specific listen errors with friendly messages
   switch (error.code) {
