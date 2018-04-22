@@ -22,7 +22,7 @@ app.set('port', port);
 /**
  * Create HTTP server.
  */
-var httpServer = http.create(app);
+var httpServer = http.createServer(app);
 httpServer.listen(80);
 httpServer.on('error',onError);
 httpServer.on('listening',httpOnListening);
