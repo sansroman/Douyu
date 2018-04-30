@@ -66,9 +66,12 @@ longzhu.on('message',msg=>{
   addDanmu([msg.roomId,msg.uid,msg.name,msg.content,msg.time]);
 })
 longzhu.on('error',err=>{
+<<<<<<< HEAD
   console.log(`Date :${new Date()}`);
   console.error(err);
   
+=======
+>>>>>>> abc4220baf447d1dcac5e75c1e28bfdb6613bcd9
   longzhu.restart();
 })
 

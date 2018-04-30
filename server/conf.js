@@ -11,7 +11,13 @@ module.exports = {
     }
   },
   certOpts:{
+<<<<<<< HEAD
     cert: fs.readFileSync(path.join('./sslcert/fullchain.pem')),
     key: fs.readFileSync(path.join('./sslcert/privkey.pem'))
   }
+=======
+    cert: fs.readFileSync(path.join(process.cwd(),'./sslcert/fullchain.pem')),
+    key: fs.readFileSync(path.join(process.cwd(),'./sslcert/privkey.pem'))  
+}
+>>>>>>> abc4220baf447d1dcac5e75c1e28bfdb6613bcd9
 }

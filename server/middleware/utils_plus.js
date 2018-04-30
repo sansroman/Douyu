@@ -52,7 +52,11 @@ class DanmuListener extends events {
   async restart(){
     this.removeAllListeners()
     this._stop()
+<<<<<<< HEAD
     this.start();
+=======
+    this.start()
+>>>>>>> abc4220baf447d1dcac5e75c1e28bfdb6613bcd9
   }
 
   async _stop() {
@@ -61,6 +65,10 @@ class DanmuListener extends events {
     this._client_chat && this._client_chat.terminate()
     this._client_other && this._client_other.terminate()
     this.emit('close');
+<<<<<<< HEAD
+=======
+
+>>>>>>> abc4220baf447d1dcac5e75c1e28bfdb6613bcd9
 }
 
   async _get_room_uid() {
@@ -86,7 +94,10 @@ class DanmuListener extends events {
         perMessageDeflate: false,
         agent: this._agent
       }));
+<<<<<<< HEAD
 
+=======
+>>>>>>> abc4220baf447d1dcac5e75c1e28bfdb6613bcd9
       this._clientList[index].on('open', this._on_connect.bind(this))
       this._clientList[index].on('message', this._on_msg.bind(this, element))
       this._clientList[index].on('error',this._on_error.bind(this))
@@ -94,7 +105,11 @@ class DanmuListener extends events {
     });
   }
   _on_error(err){
+<<<<<<< HEAD
     this.emit('error',err);
+=======
+    this.emit('error,err');
+>>>>>>> abc4220baf447d1dcac5e75c1e28bfdb6613bcd9
   }
   _on_connect() {
     this.emit('connect');

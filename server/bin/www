@@ -5,35 +5,30 @@
  */
 
 var app = require('../app');
-var debug = require('debug')('server:server');
-var http = require('http');
+var debug = require('debug')('backend-server:server');
 var https = require('https');
 var certOpts = require('../conf').certOpts;
-
-
 
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '443');
+var port = normalizePort(process.env.PORT || '8443');
 app.set('port', port);
 
 /**
  * Create HTTP server.
  */
 
+var server = https.createServer(certOpts,app);
 
-http.createServer(app).listen(80);
-
-var httpsServer = https.createServer(certOpts, app);
 /**
- * Listen on provided port, on all interfaces.
+ * Listen on provided port, on all network interfaces.
  */
 
-httpsServer.listen(port);
-httpsServer.on('error', onError);
-httpsServer.on('listening', onListening);
+server.listen(port);
+server.on('error', onError);
+server.on('listening', onListening);
 
 /**
  * Normalize a port into a number, string, or false.
@@ -88,9 +83,10 @@ function onError(error) {
  */
 
 function onListening() {
-  var addr = httpsServer.address();
+  var addr = server.address();
   var bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
+
