@@ -1,7 +1,7 @@
 <template>
   <div class="review">
         <el-table 
-              bord表er
+              border
               :data="appearData" 
               >
               <el-table-column type="expand">
@@ -12,13 +12,13 @@
                   </el-table>
                 </template>
               </el-table-column>
-              <el-table-column :fixed="this.$root.$data.isMoblie" prop="identifer" label="申诉编号" width="100">
+              <el-table-column :fixed="this.$root.$data.isMoblie" prop="identifer" label="申请人" width="100">
               </el-table-column>
-              <el-table-column prop="nn" label="申诉人" width="180">
+              <el-table-column prop="nn" label="申请人手机" width="180">
               </el-table-column>
-              <el-table-column prop="reason" label="申诉原因" >
+              <el-table-column prop="reason" label="申请社区" >
               </el-table-column>
-              <el-table-column prop="processer" label="处理人" width="180">
+              <el-table-column prop="processer" label="申请社区地址" width="180">
               </el-table-column>
               <el-table-column prop="date" label="处理时间" width="120">
               </el-table-column>

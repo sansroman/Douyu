@@ -6,10 +6,7 @@
               <el-form label-width="100px" label-position="right" ref="ruleForm" :rules="rules" :model="ruleForm" status-icon>
                 <el-form-item label="账户" prop="username">
                   <el-input type="text" v-model="ruleForm.username" ></el-input>
-                </el-form-item>
-                <el-form-item label="斗鱼ID" prop="douyunn">
-                  <el-input type="text" v-model="ruleForm.douyunn" ></el-input>
-                </el-form-item>               
+                </el-form-item>             
                 <el-form-item label="密码" prop="password">
                   <el-input type="password" v-model="ruleForm.password" ></el-input>
                 </el-form-item>
@@ -17,6 +14,21 @@
                   <el-input type="password" v-model="ruleForm.checkPass" ></el-input>
                 </el-form-item>
                 <el-form-item>
+                  <el-form-item label="真实姓名" prop="full_name">
+                  <el-input type="text" v-model="ruleForm.full_name" ></el-input>
+                </el-form-item>
+                  <el-form-item label="社区名称" prop="community_name">
+                  <el-input type="text" v-model="ruleForm.community_name" ></el-input>
+                </el-form-item>
+                <el-form-item label="负责人手机" prop="community_phone">
+                  <el-input type="text" v-model="ruleForm.community_phone" ></el-input>
+                </el-form-item>
+                <el-form-item label="社区位置" prop="community_position">
+                  <el-input type="text" v-model="ruleForm.community_position" ></el-input>
+                </el-form-item>
+
+                
+                
                   <el-button type="primary" @click="register('ruleForm')">注册</el-button>
                   <el-button @click="reset('ruleForm')">重置</el-button>
                 </el-form-item>
@@ -28,78 +40,47 @@
   </div>
 </template>
 <script>
-import axios from 'axios'
+import axios from "axios";
 
 export default {
   name: "Register",
   data() {
-
-    let validatePass = (rule, value, callback) => {
-    if (value === '') {
-        callback(new Error('请输入密码'));
-    } else if(value.length<6){
-       callback(new Error('密码不能少于6位'));
-    }else{
-         if (this.ruleForm.checkPass !== '') {
-            this.$refs.ruleForm.validateField('checkPass');
-        }
-        callback();
-    }
-    };
-    let validatePass2 = (rule, value, callback) => {
-      if (value === '') {
-          callback(new Error('请再次输入密码'));
-      } else if (value !== this.ruleForm.password) {
-          callback(new Error('两次输入密码不一致!'));
-      } else {
-          callback();
-      }
-    };
-    let validateUser = (rule,value,callback)=>{
-      console.log(value.match(/^[a-zA-Z0-9_]{1,}$/));
-      if(value === "")callback(new Error('请输入用户名'))
-      else if(value.match(/^[a-zA-Z0-9_]{1,}$/)==null) callback(new Error('只能是数字，字母或者下划线'))
-      else callback();
-    }
     return {
       ruleForm: {
         username: "",
-        douyunn:"",
         password: "",
-        checkPass:""
-      },
-      rules: {
-        username: [{ required: true,validator:validateUser,trigger: "blur" }],
-        douyunn:[{required: true,trigger: "blur" }],        
-        password:[{required: true,validator:validatePass,trigger: "blur" }],
-        checkPass:[{required: true,validator:validatePass2,trigger: "blur" }],
-        
-
+        checkPass: "",
+        fullName:"",
+        community_name:"",
+        community_phone:"",
+        community_position:""
       }
     };
   },
   methods: {
     register(formName) {
       let router = this.$router;
-      this.$refs[formName].validate((vaild)=>{
+      this.$refs[formName].validate(vaild => {
         if (vaild) {
           axios
-        .post("/register", {
-          username:this.ruleForm.username,
-          douyunn:this.ruleForm.douyunn,
-          password:this.ruleForm.password
-        })
-        .then(function(response) {
-          router.push('/login');
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
-        }else{
+            .post("/register", {
+              username: this.ruleForm.username,
+              password: this.ruleForm.password,
+              fullName:this.ruleForm.fullName,
+              community_position:this.ruleForm.community_position,
+              community_name:this.ruleForm.community_name,
+              community_phone:this.ruleForm.community_phone
+            })
+            .then(function(response) {
+              router.push("/login");
+            })
+            .catch(function(error) {
+              console.log(error);
+            });
+        } else {
           return false;
         }
-      })
-
+      });
     },
     reset(formName) {
       this.$refs[formName].resetFields();
@@ -110,10 +91,10 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
-    .layout{
-      margin-top: 20px;
-    }
-    #register-form label{ 
-      color: #fff;
-    }
+.layout {
+  margin-top: 20px;
+}
+#register-form label {
+  color: #fff;
+}
 </style>

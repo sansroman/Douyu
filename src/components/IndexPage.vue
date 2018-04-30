@@ -9,7 +9,7 @@
                 text-color="#fff"
                 active-text-color="#ffd04b"
                 router>         
-                    <el-menu-item v-show="isSuper" index="/index/total">
+                    <!-- <el-menu-item v-show="isSuper" index="/index/total">
                         <i class="el-icon-menu"></i>
                         <span slot="title">网站总览</span>
                     </el-menu-item>                    
@@ -28,16 +28,11 @@
                     <el-menu-item v-show="!isAdmin" index="/index/appear">
                         <i class="el-icon-menu"></i>                    
                         <span slot="title">用户申诉</span>
-                    </el-menu-item>
-                    <el-menu-item v-show="isAdmin" index="/index/review">
+                    </el-menu-item> -->
+                    <el-menu-item  index="/index/review">
                         <i class="el-icon-menu"></i>                    
-                        <span slot="title">审核申诉</span>
-                    </el-menu-item>
-                    <div class="userInfo">
-                        <p class="role">{{job}}:</p>
-                        <p class="username">{{username}}</p>
-                        <!-- <a href="#">注销</a> -->
-                    </div>            
+                        <span slot="title">商家</span>
+                    </el-menu-item>           
                 </el-menu>
           </el-aside>
           <el-main>

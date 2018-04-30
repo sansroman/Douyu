@@ -64,11 +64,6 @@
                 password: this.ruleForm.password
               })
               .then(function (response) {
-                sessionStorage.setItem("username", response.data.douyunn);
-                sessionStorage.setItem(
-                  "roles",
-                  JSON.stringify(response.data.roles)
-                );
                 if(response.data.roles.manager==3)selt.$router.push("/index/total");
                 else if(response.data.roles.query==3){
                   selt.$router.push("/index/query");
